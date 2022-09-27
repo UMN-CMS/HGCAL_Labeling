@@ -16,7 +16,7 @@ class LabelPreview(tk.Frame):
         self.grid_propagate(0)
         self.parent = parent
 
-        self.pack(side="left", padx=20, pady=20, fill=tk.Y)
+        self.pack(side="left", padx=10, pady=20, fill=tk.Y)
         
         self.top_lbl = tk.Label(self, text = "Label Preview", font=('Ariel', 48))
         self.top_lbl.pack(padx=20, pady=20)
@@ -27,8 +27,8 @@ class LabelPreview(tk.Frame):
 
         self.im = ImageTk.PhotoImage(Image.open(im_path))
         
-        self.im_lbl = tk.Label(self, image = self.im, width = 800, height = 600)
-        self.im_lbl.pack()
+        self.im_lbl = tk.Label(self, image = self.im, width = 700, height = 600)
+        self.im_lbl.pack(fill=tk.X)
 
         self.update_btn = tk.Button(self, text = "Update", font=('Ariel', 24), command=self.update_img_widget)
         self.update_btn.pack(padx=20, pady=20)
@@ -40,8 +40,8 @@ class LabelPreview(tk.Frame):
 
         self.im = ImageTk.PhotoImage(Image.open(im_path))
         
-        self.im_lbl = tk.Label(self, image = self.im, width = 800, height = 600)
-        self.im_lbl.pack()
+        self.im_lbl = tk.Label(self, image = self.im, width = 700, height = 600)
+        self.im_lbl.pack(fill=tk.X)
          
         self.update_btn = tk.Button(self, text = "Update", font=('Ariel', 24), command=self.update_img_widget)
         self.update_btn.pack(padx=20, pady=20)
@@ -108,35 +108,35 @@ class InputWidgets(tk.Frame):
         self.type_frame = tk.Frame(self.input_frame)
         self.type_frame.pack(padx=20, pady=10, fill=tk.X)
 
-        self.maj_lbl = tk.Label(self.type_frame, text="Major Type:", font=('Ariel', 24))
+        self.maj_lbl = tk.Label(self.type_frame, text="Major Type:", font=('Ariel', 16))
         self.maj_lbl.pack(side="left", padx=20, pady=10)
 
         majortypes = self.get_majortypes()
 
         self.majortype = tk.StringVar()
 
-        self.maj_combo = ttk.Combobox(self.type_frame, textvariable=self.majortype, values = self.get_majortypes().keys())
+        self.maj_combo = ttk.Combobox(self.type_frame, textvariable=self.majortype, values = list(self.get_majortypes().keys()))
         self.maj_combo.pack(side="left", padx=20, pady=10)
 
-        self.sub_lbl = tk.Label(self.type_frame, text="Sub Type:", font=('Ariel', 24))
+        self.sub_lbl = tk.Label(self.type_frame, text="Sub Type:", font=('Ariel', 16))
         self.sub_lbl.pack(side="left", padx=20, pady=10)
 
         self.subtype = tk.StringVar()
-        self.sub_combo = ttk.Combobox(self.type_frame, textvariable=self.subtype, values = self.get_subtypes().values(), state="disable")
+        self.sub_combo = ttk.Combobox(self.type_frame, textvariable=self.subtype, values = list(self.get_subtypes().values()), state="disable")
         self.sub_combo.pack(side="left", padx=20, pady=10)
         self.majortype.trace('w', self.enable_subtype)
 
         self.num_frame = tk.Frame(self.input_frame)
         self.num_frame.pack(padx=20, pady=10, fill=tk.X)
 
-        self.num_lbl = tk.Label(self.num_frame, text="Number of Labels:", font =('Ariel', 24))
+        self.num_lbl = tk.Label(self.num_frame, text="Number of Labels:", font =('Ariel', 16))
         self.num_lbl.pack(side="left", padx=20, pady=10)
 
         self.num = tk.StringVar()
         self.num_spin = tk.Spinbox(self.num_frame, from_=14, to=1000, increment=14, textvariable=self.num, state="disable")
         self.num_spin.pack(side="left", padx=20, pady=10)
 
-        self.sn_lbl = tk.Label(self.num_frame, text="S/N:", font =('Ariel', 24))
+        self.sn_lbl = tk.Label(self.num_frame, text="S/N:", font =('Ariel', 16))
         self.sn_lbl.pack(side="left", padx=20, pady=10)
 
         self.sn = tk.StringVar()
@@ -148,7 +148,7 @@ class InputWidgets(tk.Frame):
         self.prod_frame = tk.Frame(self.input_frame)
         self.prod_frame.pack(side="left", padx=20, pady=10)
         
-        self.prod_lbl = tk.Label(self.prod_frame, text="Production Version:", font=('Ariel', 24))
+        self.prod_lbl = tk.Label(self.prod_frame, text="Production Version:", font=('Ariel', 16))
         self.prod_lbl.pack(side="left", padx=20, pady=10)
 
         self.prod = tk.StringVar()
@@ -158,7 +158,7 @@ class InputWidgets(tk.Frame):
         self.proto_radio = tk.Radiobutton(self.prod_frame, text="Prototype", variable=self.prod, value="Prototype")
         self.proto_radio.pack(side="left", padx=20, pady=10)
 
-        self.make_btn = tk.Button(self, text="Make Labels", font=('Ariel', 24), command=self.get_label)
+        self.make_btn = tk.Button(self, text="Make Labels", font=('Ariel', 16), command=self.get_label)
         self.make_btn.pack(padx=20, pady=20)
 
         self.printout = PrintOut(self)
@@ -211,7 +211,7 @@ class InputWidgets(tk.Frame):
 
     #Helper functions to make interface nicer
     def enable_subtype(self, *args):
-        new_vals = self.get_subtypes().keys()
+        new_vals = list(self.get_subtypes().keys())
         self.sub_combo['values'] = new_vals
         self.sub_combo['state'] = "normal"
 
@@ -223,6 +223,10 @@ class InputWidgets(tk.Frame):
             self.num_spin["increment"] = 2
             self.num_spin["from_"] = 2
             self.num.set("2")
+        else:
+            self.num_spin["increment"] = 14
+            self.num_spin["from_"] = 14
+            self.num.set("14")
 
     def make_preview(self):
         return

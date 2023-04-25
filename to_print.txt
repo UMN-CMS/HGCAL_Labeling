@@ -1,0 +1,20 @@
+Larger Labels: 
+
+- Econs: 
+    Full, ECON-T only, Chip-on-board: 20
+    Full, ECON-T only, packaged chip: 20
+    Full, mechanical dummy: 30
+
+- LD Wagons:
+    5 of each (10 of one module ones) 
+
+Smaller Labels: 
+
+- Wagon Wheels
+    Enoguh for all the wheels here (14) 
+
+- Partial Hexaboards:
+    40 of each (left and right semis)
+
+- Full Hexaboards:
+    100  

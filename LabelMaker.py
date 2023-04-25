@@ -1,11 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import tkinter as tk
+import tkinter.messagebox
+import os
 
 from PIL import ImageTk, Image
 from tkinter import ttk
 from static.MajorTypes import get_majortypes, get_subtypes
 from make_label_gui import load_barcodes
+from stash_printed import Stasher
+
 
 # Class to make previewing widget of labels
 class LabelPreview(tk.Frame):
@@ -66,7 +70,8 @@ class PrintOut(tk.Frame):
         self.main_tb = tk.Text(self.printout_frame, width=400, height=15, wrap=tk.WORD)
         self.scroll = tk.Scrollbar(self.printout_frame)
         self.scroll.pack(side=tk.RIGHT, fill=tk.BOTH)
-        self.main_tb.insert(tk.END, "Output")
+        self.main_tb.insert(tk.END, "Fill inputs above with label major type and subtype\nSpecify the number of labels and starting serial number\nLabels will be created sequentially by final 5 digits of serial number\n")
+        self.main_tb.see(tk.END)
         self.main_tb.pack(side=tk.LEFT, fill=tk.Y)
         self.scroll.config(command=self.main_tb.yview)
         self.main_tb.config(yscrollcommand=self.scroll.set)
@@ -75,10 +80,13 @@ class PrintOut(tk.Frame):
         self.print_btn.pack(padx=20,pady=20)
     
     def update_text(self, text):
-        self.main_tb.insert(tk.END, "\nLabel ZPL:\n{}\n".format(text))
+        self.main_tb.insert(tk.END, "{}\n".format(text))
+        self.main_tb.see(tk.END)
 
     def print_label(self):
         self.main_tb.insert(tk.END, "\nPrinting Label...\n")
+        #self.stasher.backup()
+        os.system("lp -d zebra_zt220 -o raw tmp/tmp.zpl")
 
 # Class to create and control all of the input for labels
 class InputWidgets(tk.Frame):
@@ -171,18 +179,33 @@ class InputWidgets(tk.Frame):
         print(lbl_info)
 
         print("Making Labels...")
-        if lbl_info[0]["major_sn"] == "12" or lbl_info[0]["major_sn"] == "13":
-            zpl = load_barcodes(lbl_info, wagon=True)
+        if lbl_info[0]["major_sn"] == "12" or lbl_info[0]["major_sn"] == "13" or lbl_info[0]["major_sn"] == "14" or lbl_info[0]["major_sn"] == "15":
+            zpl, barcodes = load_barcodes(lbl_info, wagon=True)
         else:
-            zpl = load_barcodes(lbl_info)
+            zpl, barcodes = load_barcodes(lbl_info)
 
-        with open("tmp/tmp_zpl.txt", 'w') as f:
+        self.stasher = Stasher(barcodes)
+        overlap, serial = self.stasher.search()
+
+        if overlap:
+            message = "The following serial numbers have already been printed:\n"
+            for s in serial:
+                message += "{}\n".format(s)
+            message += "Continue anyway?"
+            override = tkinter.messagebox.askyesno('Warning!', message)
+            if not override: return
+            else:
+                override = tkinter.messagebox.askyesno('Final Warning!', 'You are risking printing the same label twice which could cause major confusion. Are you sure?')
+                if not override: return
+
+        with open("tmp/tmp.zpl", 'w') as f:
             f.write(zpl)
         f.close()
 
         self.preview.update_img_widget()
-        
-        self.printout.update_text(zpl)
+       
+        for i in barcodes:
+            self.printout.update_text("Making label with S/N: {}".format(i.full_serial))
 
     def get_label_info(self):
 
@@ -219,7 +242,7 @@ class InputWidgets(tk.Frame):
         self.sn_spin['state'] = "normal"
         self.num_spin['state'] = "normal"
 
-        if self.majortype.get().find("Wagon") != -1:
+        if self.majortype.get().find("Wagon") != -1 or self.majortype.get().find("Concentrator") != -1:
             self.num_spin["increment"] = 2
             self.num_spin["from_"] = 2
             self.num.set("2")

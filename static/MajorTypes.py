@@ -32,7 +32,7 @@ sub_ldengine = {
     "EngDmy":       {"sub_sn": "0310", "sub_code": "0900"}
 }
 sub_hdengine = {
-    "HDEV3":        {"sub_sn": "0300", "sub_code": "0300"}
+    "HDEF3":        {"sub_sn": "0300", "sub_code": "03F0"}
 }
 sub_ldwagoneast = {
     "East 1A":      {"sub_sn": "10A1", "sub_code": "10A1"},
@@ -86,18 +86,41 @@ sub_tester = {
     "EngTW":        {"sub_sn": "0042", "sub_code": "0042"}
 }
 
+sub_tile_2 = {
+        "":     {"sub_sn": "", "sub_code": ""},
+}
+
+sub_tile_4 = {
+        "TPBC":       {"sub_sn": "{}{}{}{}", "sub_code": "{}{}{}{}"},
+        "TPBCNO":     {"sub_sn": "{}{}{}{}", "sub_code": "{}{}{}{}"},
+        "Twin-Ax Cable Type A":       {"sub_sn": "1112", "sub_code": "TXA2"},
+        "Twin-Ax Cable Type B":       {"sub_sn": "1122", "sub_code": "TXB2"},
+        "Twin-Ax Cable Type C":       {"sub_sn": "1132", "sub_code": "TXC2"},
+        "Twin-Ax Cable Type D":       {"sub_sn": "1142", "sub_code": "TXD2"},
+}
+
 majortypes = {
-    '':                         {"major_sn": 0, "major_code": "","subtypes": {"sub_sn": "None"}},
-    'LD Hexaboard':             {"major_sn": 3, "major_code": "XL","subtypes": sub_ldhexaboard},
-    "LD Engine":                {"major_sn": 10, "major_code": "EL", "subtypes": sub_ldengine},
-    "HD Engine":                {"major_sn": 11, "major_code": "EH", "subtypes": sub_hdengine},
-    "LD Wagon East":            {"major_sn": 12, "major_code": "WE", "subtypes": sub_ldwagoneast},
-    "LD Wagon West":            {"major_sn": 13, "major_code": "WW", "subtypes": sub_ldwagonwest},
-    "HD Wagon":                 {"major_sn": 14, "major_code": "WH", "subtypes": sub_hdwagon},
-    "Concentrator Mezzanine":   {"major_sn": 15, "major_code": "CM", "subtypes": sub_econ},
-    "DCDC Board":               {"major_sn": 16, "major_code": "DC", "subtypes": sub_dcdc},
-    "Zipper Board":             {"major_sn": 17, "major_code": "ZP", "subtypes": sub_zipper},
-    'Tester':                   {"major_sn": 90, "major_code": "TS","subtypes": sub_tester}
+    '':                              {"major_sn": 0, "major_code": "","subtypes": {"sub_sn": "None"}},
+    'LD Hexaboard':                  {"major_sn": 3, "major_code": "XL","subtypes": sub_ldhexaboard},
+    "LD Engine":                     {"major_sn": 10, "major_code": "EL", "subtypes": sub_ldengine},
+    "HD Engine":                     {"major_sn": 11, "major_code": "EH", "subtypes": sub_hdengine},
+    "LD Wagon East":                 {"major_sn": 12, "major_code": "WE", "subtypes": sub_ldwagoneast},
+    "LD Wagon West":                 {"major_sn": 13, "major_code": "WW", "subtypes": sub_ldwagonwest},
+    "HD Wagon":                      {"major_sn": 14, "major_code": "WH", "subtypes": sub_hdwagon},
+    "Concentrator Mezzanine":        {"major_sn": 15, "major_code": "CM", "subtypes": sub_econ},
+    "DCDC Board":                    {"major_sn": 16, "major_code": "DC", "subtypes": sub_dcdc},
+    "Zipper Board":                  {"major_sn": 17, "major_code": "ZP", "subtypes": sub_zipper},
+    'Tester':                        {"major_sn": 90, "major_code": "TS","subtypes": sub_tester},
+    'Bare Cast Machined Tile':       {"major_sn": 20, "major_code": "BC","subtypes": sub_tester},
+    'Bare Injection-Molded Tile':    {"major_sn": 21, "major_code": "BI","subtypes": sub_tester},
+    'Wrapped Cast Machined Tile':    {"major_sn": 22, "major_code": "TC","subtypes": sub_tester},
+    'Wrapped Injection-Molded Tile': {"major_sn": 23, "major_code": "TI","subtypes": sub_tester},
+    'SiPM':                          {"major_sn": 24, "major_code": "SP","subtypes": sub_tester},
+    'Tile PCB w/o Components':       {"major_sn": 25, "major_code": "TP","subtypes": sub_tester},
+    'Tile PCB (TileBoard)':          {"major_sn": 26, "major_code": "TB","subtypes": sub_tester},
+    'Tile Module':                   {"major_sn": 27, "major_code": "TM","subtypes": sub_tester},
+    'Wingboard and Motherboard':     {"major_sn": 28, "major_code": "WM","subtypes": sub_tester},
+    'TB Cable':                      {"major_sn": 29, "major_code": "CB","subtypes": sub_tile_4},
 }    
 
 def get_majortypes():
@@ -105,3 +128,7 @@ def get_majortypes():
 
 def get_subtypes(key):
     return majortypes[key]["subtypes"] 
+
+def get_tile_subtypes():
+    pass
+

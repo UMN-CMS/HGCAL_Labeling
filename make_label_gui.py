@@ -32,15 +32,27 @@ class myLabel(Label):
 
 class Barcode:
     
-    def __init__(self, label_dict):
+    def __init__(self, label_dict, tile=False):
         self.serial = str(label_dict['sn'])
-        self.subtype = "{:02d}".format(int(label_dict['major_sn'])) + label_dict['sub_sn']
-        
-        self.code = label_dict["major_code"] + label_dict["sub_code"]
-        self.subcode = label_dict["sub_code"]
-        self.first = '320' if not label_dict['prod'] else '320'
 
-        self.full_serial = self.first + self.code + "{:06d}".format(int(self.serial))
+        if tile:
+            self.subtype = "{:02d}".format(int(label_dict['major_sn'])) + "{:02d}".format(int(label_dict['size'])) + "{:04d}".format(int(label_dict['batch']))
+            self.batch = int(label_dict['batch'])
+        else:
+            self.subtype = "{:02d}".format(int(label_dict['major_sn'])) + label_dict['sub_sn']
+        
+        if tile:
+            self.subcode = "{:02d}".format(int(label_dict['size'])) + "{:04d}".format(int(label_dict['batch']))
+            self.code = label_dict["major_code"] + self.subcode
+        else:
+            self.subcode = label_dict["sub_code"]
+            self.code = label_dict["major_code"] + label_dict["sub_code"]
+        self.first = '320' #if not label_dict['prod'] else '320'
+
+        if tile:
+            self.full_serial = self.first + self.code + "{:04d}".format(int(self.serial))
+        else:
+            self.full_serial = self.first + self.code + "{:06d}".format(int(self.serial))
 
         self.majorname = label_dict["major_name"]
         self.nickname = label_dict["sub_name"]
@@ -150,7 +162,7 @@ def produce_wagon_barcode(barcode, barcode_dict, x_offset=0, y_offset=0):
 
     return l
 
-def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875):
+def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=False):
 
     megalabel.origin(0.25+x_offset,0.75+y_offset)
     megalabel.write_text(barcode.get_label_name(), char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
@@ -162,7 +174,10 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875):
     megalabel.endorigin()
 
     megalabel.origin(2.75+x_offset, 7.00+y_offset)
-    megalabel.write_text("{:06d}".format(int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
+    if tile:
+        megalabel.write_text("{:04d}:{:01d}".format(int(barcode.batch),int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
+    else:
+        megalabel.write_text("{:06d}".format(int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
     megalabel.endorigin()
     
 def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875):
@@ -188,6 +203,10 @@ def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875)
         title = barcode.majorname
         sub = "[{}+0]".format(barcode.subcode[1])
         nickname = barcode.nickname
+    elif "Twin" in barcode.nickname:
+        title = barcode.nickname.split(" ")[0]
+        nickname = "".join(barcode.nickname.split(" ")[2:])
+        sub = barcode.nickname.split(" ")[1] 
     else:
         title = "Con Mezz"
         sub = barcode.nickname.replace(",", " ").split(" ")[1] 
@@ -222,7 +241,7 @@ def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875)
     #megalabel.preview()
     
 
-def produce_strips(barcodes):
+def produce_strips(barcodes, tile=False):
 
     if not os.path.isdir(barcodes[0].get_label_name()):
         os.makedirs(barcodes[0].get_label_name())
@@ -239,7 +258,7 @@ def produce_strips(barcodes):
     for y in range(0, rows):
         for x in range(0, cols):
             if y*7 + x == len(barcodes): break
-            add_to_megalabel(l, barcodes[y*7+x], x_offset=left+x*spacing, y_offset=top+y*spacing)
+            add_to_megalabel(l, barcodes[y*7+x], x_offset=left+x*spacing, y_offset=top+y*spacing, tile=tile)
 
     zpl = l.dumpZPL()
     l.preview()
@@ -275,26 +294,34 @@ def produce_strips_wagon(barcodes):
 
     return l, zpl
    
-def load_barcodes(barcode_list, wagon=False):
+def load_barcodes(barcode_list, wagon=False, tile=False):
     
     zpl = ""
 
     all_barcodes = []
 
-    if not wagon:
+    if not wagon and not tile:
         for i in range(0,len(barcode_list),14):
             barcodes = [Barcode(x) for x in barcode_list[i:i+14]]
             l, temp_zpl = produce_strips(barcodes)
 
             zpl = temp_zpl + "\n" + zpl
             all_barcodes += barcodes
-    else:
+    elif wagon:
         for i in range(0,len(barcode_list),2):
             barcodes = [Barcode(x) for x in barcode_list[i:i+2]]
             l, temp_zpl = produce_strips_wagon(barcodes)
 
             all_barcodes += barcodes
             zpl = temp_zpl + "\n" + zpl
+    elif tile:
+        for i in range(0,len(barcode_list),14):
+            barcodes = [Barcode(x, tile=tile) for x in barcode_list[i:i+14]]
+            l, temp_zpl = produce_strips(barcodes, tile=True)
+
+            all_barcodes += barcodes
+            zpl = temp_zpl + "\n" + zpl
+
 
     return zpl, all_barcodes
 

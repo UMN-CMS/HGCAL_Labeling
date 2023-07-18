@@ -3,6 +3,7 @@
 from zpl import Label
 import os
 import argparse
+import time
 from PIL import Image
 try:
     from urllib.request import urlopen
@@ -27,7 +28,8 @@ class myLabel(Label):
             im = Image.open(io.BytesIO(res))
             #im.show()
             im.save(outfile)
-        except IOError:
+        except IOError as e:
+            print(e)
             raise Exception("Invalid preview received, mostlikely bad ZPL2 code uploaded.")
 
 class Barcode:
@@ -164,6 +166,33 @@ def produce_wagon_barcode(barcode, barcode_dict, x_offset=0, y_offset=0):
 
 def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=False):
 
+    if tile:
+        megalabel.origin(1.25+x_offset,0.00+y_offset)
+        megalabel.write_text(barcode.get_label_name(), char_height=2.5, char_width=2.5, line_width=16, orientation='R', justification='L')
+    else:
+        megalabel.origin(0.25+x_offset,0.75+y_offset)
+        megalabel.write_text(barcode.get_label_name(), char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
+    megalabel.endorigin()
+
+    if tile:
+        megalabel.origin(6.0+x_offset, 0.25+y_offset) #Changed x offset from 4.5 to 6 and y off set from 0.75 to 0.25
+        megalabel.write_datamatrix(height=5, orientation='N', sq=200, aspect=1)
+    else:
+        megalabel.origin(2.75+x_offset, 0.75+y_offset)
+        megalabel.write_datamatrix(height=3, orientation='N', sq=200, aspect=1)
+    megalabel.write_text('{}'.format(barcode.full_serial))
+    megalabel.endorigin()
+
+    if tile:
+        megalabel.origin(4.5+x_offset, 11.5+y_offset) #Changed char height & width from 2.5 to 3 and line width from 10 to 12.5
+        megalabel.write_text("B{:04d} #{:01d}".format(int(barcode.batch),int(barcode.serial)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='R')
+    else:
+        megalabel.origin(2.75+x_offset, 7.00+y_offset)
+        megalabel.write_text("{:06d}".format(int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
+    megalabel.endorigin()
+    
+def add_to_megalabel_tile(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=False):
+
     megalabel.origin(0.25+x_offset,0.75+y_offset)
     megalabel.write_text(barcode.get_label_name(), char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
     megalabel.endorigin()
@@ -241,27 +270,39 @@ def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875)
     #megalabel.preview()
     
 
-def produce_strips(barcodes, tile=False):
+def produce_strips(barcodes, tile=False, preview=False):
 
     if not os.path.isdir(barcodes[0].get_label_name()):
         os.makedirs(barcodes[0].get_label_name())
 
-    l = myLabel(25.375, 88.9, dpmm=8.0)
 
-    left = 2.175
-    top = 3.175
-    spacing = 12.7
+    if tile:
+        l = myLabel(44.75, 88.9, dpmm=8.0)
 
-    rows = int(len(barcodes) / 7) + 1
-    cols = 7
+        left = 1.5875
+        top = 2.0
+        spacing = 22.225
+
+        cols = 4
+    else:
+        l = myLabel(25.375, 88.9, dpmm=8.0)
+
+        left = 2.175
+        top = 3.175
+        spacing = 12.7
+
+        cols = 7
+
+    rows = int(len(barcodes) / cols) + 1
 
     for y in range(0, rows):
         for x in range(0, cols):
-            if y*7 + x == len(barcodes): break
-            add_to_megalabel(l, barcodes[y*7+x], x_offset=left+x*spacing, y_offset=top+y*spacing, tile=tile)
+            if y*cols + x == len(barcodes): break
+            add_to_megalabel(l, barcodes[y*cols+x], x_offset=left+x*spacing, y_offset=top+y*spacing, tile=tile)
 
     zpl = l.dumpZPL()
-    l.preview()
+    if preview: 
+        l.preview()
 
     with open("label.zpl", 'w') as f:
         f.write(l.dumpZPL())
@@ -269,7 +310,7 @@ def produce_strips(barcodes, tile=False):
 
     return l, zpl
    
-def produce_strips_wagon(barcodes):
+def produce_strips_wagon(barcodes, preview=False):
 
     if not os.path.isdir(barcodes[0].get_label_name()):
         os.makedirs(barcodes[0].get_label_name())
@@ -286,7 +327,8 @@ def produce_strips_wagon(barcodes):
         add_to_megalabel_wagon(l, barcodes[y], x_offset=left, y_offset=top+y*spacing)
 
     zpl = l.dumpZPL()
-    l.preview()
+    if preview: 
+        l.preview()
 
     with open("label.zpl", 'w') as f:
         f.write(l.dumpZPL())
@@ -303,21 +345,24 @@ def load_barcodes(barcode_list, wagon=False, tile=False):
     if not wagon and not tile:
         for i in range(0,len(barcode_list),14):
             barcodes = [Barcode(x) for x in barcode_list[i:i+14]]
-            l, temp_zpl = produce_strips(barcodes)
+            should_preview = i + 14 == len(barcode_list)
+            l, temp_zpl = produce_strips(barcodes, preview=should_preview)
 
             zpl = temp_zpl + "\n" + zpl
             all_barcodes += barcodes
     elif wagon:
         for i in range(0,len(barcode_list),2):
             barcodes = [Barcode(x) for x in barcode_list[i:i+2]]
-            l, temp_zpl = produce_strips_wagon(barcodes)
+            should_preview = i + 2 == len(barcode_list)
+            l, temp_zpl = produce_strips_wagon(barcodes, preview=should_preview)
 
             all_barcodes += barcodes
             zpl = temp_zpl + "\n" + zpl
     elif tile:
-        for i in range(0,len(barcode_list),14):
-            barcodes = [Barcode(x, tile=tile) for x in barcode_list[i:i+14]]
-            l, temp_zpl = produce_strips(barcodes, tile=True)
+        for i in range(0,len(barcode_list),8): #Changed from 14 to 8
+            barcodes = [Barcode(x, tile=tile) for x in barcode_list[i:i+8]] #Changed from 14 to 8
+            should_preview = i + 8 == len(barcode_list)
+            l, temp_zpl = produce_strips(barcodes, tile=True, preview=should_preview)
 
             all_barcodes += barcodes
             zpl = temp_zpl + "\n" + zpl

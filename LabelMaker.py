@@ -124,6 +124,8 @@ class InputWidgets(tk.Frame):
 
     def create_input_widgets(self):
 
+        os.system("lp -d Zebra -o raw setLabelLength_Nominal.zpl")
+
         self.input_frame = tk.Frame(self, highlightbackground="black", highlightthickness = 2)
         self.input_frame.pack(padx=20, pady=5, fill=tk.X)
         
@@ -154,6 +156,8 @@ class InputWidgets(tk.Frame):
         self.printout = PrintOut(self)
 
     def create_tile_inputs(self):
+
+        os.system("lp -d Zebra -o raw setLabelLength_Tile.zpl")
 
         self.clear_temp_widgets()
 
@@ -474,9 +478,9 @@ class InputWidgets(tk.Frame):
         adjust_serial = 0
 
         for i in range(start, start+num_lbl):
-            if i % 7 == start and i != start:
+            if i % 8 == start and i != start:
                 batch = str(int(batch) + 1)
-                adjust_serial = 7
+                adjust_serial += 8
             temp_lbl_info = {}
             temp_lbl_info["major_sn"] = str(majortypes[self.majortype.get()]["major_sn"])
             temp_lbl_info["size"] = str(size)
@@ -484,7 +488,7 @@ class InputWidgets(tk.Frame):
             temp_lbl_info["sn"] = i - adjust_serial
             temp_lbl_info["major_name"] = self.majortype.get()
             temp_lbl_info["major_code"] = majortypes[self.majortype.get()]["major_code"]
-            temp_lbl_info["sub_name"] = "QC Cast"
+            temp_lbl_info["sub_name"] = "Cast Sheet QC"
             self.label_info.append(temp_lbl_info)
 
         print(self.label_info)       

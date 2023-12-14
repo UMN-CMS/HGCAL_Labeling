@@ -6,7 +6,7 @@ import os
 
 from PIL import ImageTk, Image
 from tkinter import ttk
-from static.MajorTypes import get_majortypes, get_subtypes
+from static.MajorTypes import get_majortypes, get_subtypes, get_macs
 from make_label_gui import load_barcodes
 from stash_printed import Stasher
 
@@ -154,6 +154,99 @@ class InputWidgets(tk.Frame):
         self.make_btn.pack(padx=20, pady=20)
 
         self.printout = PrintOut(self)
+
+    def create_module_inputs(self):
+
+        os.system("lp -d Zebra -o raw setLabelLength_Module.zpl")
+
+        self.clear_temp_widgets()
+
+        self.rows_frame = tk.Frame(self.input_frame)
+        self.rows_frame.pack(padx=20, pady=5, fill=tk.X)
+
+        self.temp_widgets.append(self.rows_frame)
+
+        self.num_frame = tk.Frame(self.input_frame)
+        self.num_frame.pack(padx=20, pady=5, fill=tk.X)
+
+        self.temp_widgets.append(self.num_frame)
+
+        self.sn_frame = tk.Frame(self.input_frame)
+        self.sn_frame.pack(padx=20, pady=5, fill=tk.X)
+
+        self.temp_widgets.append(self.sn_frame)
+
+        self.prod_frame = tk.Frame(self.input_frame)
+        self.prod_frame.pack(padx=20, pady=5, fill=tk.X)
+        
+        self.temp_widgets.append(self.prod_frame)
+
+        self.num_lbl = tk.Label(self.num_frame, text="Number of Labels:", font =('Ariel', 16))
+        self.num_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.num_lbl)
+
+        self.num = tk.StringVar()
+        self.num_spin = tk.Spinbox(self.num_frame, from_=10, to=1000, increment=10, textvariable=self.num, state="normal")
+        self.num_spin.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.num_spin)
+
+        self.MAC_lbl = tk.Label(self.num_frame, text="MAC:", font=('Ariel', 16))
+        self.MAC_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.MAC_lbl)
+
+        self.mac = tk.StringVar()
+        self.mac_combo = ttk.Combobox(self.num_frame, textvariable=self.mac, values = list(get_macs().keys()))
+        self.mac_combo.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.mac_combo)
+
+        self.roc_lbl = tk.Label(self.sn_frame, text="ROC Version:", font=('Ariel', 16))
+        self.roc_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.roc_lbl)
+
+        self.roc_num = tk.StringVar()
+        print(['X'] + [str(x) for x in range(1,5)])
+        self.roc_combo = ttk.Combobox(self.sn_frame, textvariable=self.roc_num, values = ['X'] + [str(x) for x in range(1,5)])
+        self.roc_combo.pack(side="left", padx=20, pady=5)
+
+        #self.roc_spin = tk.Spinbox(self.sn_frame, from_=1, to=10, increment=1, textvariable=self.roc_num, state="normal")
+        #self.roc_spin.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.roc_combo)
+
+        self.sn_lbl = tk.Label(self.sn_frame, text="S/N:", font =('Ariel', 16))
+        self.sn_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.sn_lbl)
+
+        self.sn = tk.StringVar()
+        self.sn_spin = tk.Spinbox(self.sn_frame, from_=1, to=999999, textvariable=self.sn, state="normal")
+        self.sn_spin.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.sn_spin)
+
+        self.prod_lbl = tk.Label(self.prod_frame, text="Production Version:", font=('Ariel', 16))
+        self.prod_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.prod_lbl)
+
+        self.prod = tk.StringVar()
+        self.prod_radio = tk.Radiobutton(self.prod_frame, text="Production", variable=self.prod, value="Production")
+        self.prod_radio.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.prod_radio)
+
+        self.proto_radio = tk.Radiobutton(self.prod_frame, text="Prototype", variable=self.prod, value="Prototype")
+        self.proto_radio.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.proto_radio)
+
+        self.make_btn["command"] = self.get_label
+        self.printout.repack_print()
 
     def create_tile_inputs(self):
 
@@ -382,6 +475,9 @@ class InputWidgets(tk.Frame):
         print("Making Labels...")
         if lbl_info[0]["major_sn"] in ["12", "13", "14", "15", "29"]:
             zpl, barcodes = load_barcodes(lbl_info, wagon=True)
+        elif lbl_info[0]["major_sn"] in ["1","2","3","4","5","6","7","8","9"]:
+            print(self.mac.get(), self.roc_num.get())
+            zpl, barcodes = load_barcodes(lbl_info, module=True, MAC=get_macs()[self.mac.get()]["mac_code"], ROC=self.roc_num.get())
         else:
             zpl, barcodes = load_barcodes(lbl_info)
 
@@ -410,6 +506,8 @@ class InputWidgets(tk.Frame):
 
     def get_label_info(self):
 
+        print("Getting label info")
+
         majortypes = self.get_majortypes()
         subtypes = self.get_subtypes()
 
@@ -430,7 +528,6 @@ class InputWidgets(tk.Frame):
             temp_lbl_info["sub_code"] = subtypes[self.subtype.get()]["sub_code"]
             self.label_info.append(temp_lbl_info)
 
-        print(self.label_info)       
         return self.label_info
 
     def get_label_tile(self):
@@ -507,6 +604,14 @@ class InputWidgets(tk.Frame):
             self.num_spin["increment"] = 2
             self.num_spin["from_"] = 2
             self.num.set("2")
+        elif "Tile" in self.majortype.get():
+            self.num_spin["increment"] = 8
+            self.num_spin["from_"] = 8
+            self.num_spin.set("8")
+        elif any(x in self.majortype.get() for x in ["LD Module", "HD Module"]):
+            self.num_spin["increment"] = 10
+            self.num_spin["from_"] = 10
+            self.num_spin.set("10")
         else:
             self.num_spin["increment"] = 14
             self.num_spin["from_"] = 14
@@ -519,6 +624,8 @@ class InputWidgets(tk.Frame):
             self.create_tile_pcb_mod_inputs("Module")
         elif self.majortype.get().find("Bare") != -1 or self.majortype.get().find("Wrapped") != -1:
             self.create_tile_inputs()
+        elif "Module" in self.majortype.get():
+            self.create_module_inputs()
         else:
             self.create_general_inputs()
 

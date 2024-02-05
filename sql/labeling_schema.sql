@@ -22,7 +22,7 @@ create table Order_Info
 	order_date datetime,
 	fulfillment_date datetime,
 	primary key (order_id)
-)
+);
 
 create table Major_Type
 (

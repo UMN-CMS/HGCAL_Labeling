@@ -26,7 +26,9 @@ create table Sub_Type
 	primary key (sub_type_id),
 	sub_sn int(4) unsigned not null,
 	sub_code varchar(4) not null,
-	identifyer_name varchar(50) not null
+	name varchar(50) not null,
+	identifyer_name varchar(10) not null
+
 );
 
 create table Major_Sub_Stitch

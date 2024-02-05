@@ -32,5 +32,5 @@ create table Sub_Type
 create table Major_Sub_Stitch
 (
 	major_type_id int unsigned,
-	sub_type_id int unsigned,
+	sub_type_id int unsigned
 );

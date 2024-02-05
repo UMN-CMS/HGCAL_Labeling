@@ -1,14 +1,14 @@
 create table Board
 (
+	board_id int unsigned auto_increment,
 	full_sn varchar(15) not null,
 	type_sn int(6) not null,
 	type_code varchar(6) not null,
 	sn int(6) not null,
-	board_id int unsigned auto_increment,
 	major_type_id int unsigned,
 	sub_type_id int unsigned, 
 	primary key (board_id),
-	unique(sn)
+	unique(full_sn)
 );
 
 create table Major_Type

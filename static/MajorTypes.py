@@ -115,7 +115,8 @@ sub_ldwagonwest = {
     "West 3A":      {"sub_sn": "30A1", "sub_code": "30A1"},
     "Lefty Python": {"sub_sn": "30A2", "sub_code": "30A2"},
     "West T":       {"sub_sn": "30A3", "sub_code": "30A3"},
-    "West 1 Debug": {"sub_sn": "10Z1", "sub_code": "10Z1"}
+    "West 1 Debug": {"sub_sn": "10Z1", "sub_code": "10Z1"},
+    "West 1F+1P A":  {"sub_sn": "11A1", "sub_code": "11A1"}
 }
 sub_hdwagon = {
     "Prototype":        {"sub_sn": "020A", "sub_code": "020A"},

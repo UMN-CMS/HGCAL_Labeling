@@ -281,11 +281,11 @@ def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875)
 
     if "East" in barcode.majorname or "West" in barcode.majorname:
         title = "{} {}".format(barcode.majorname.split(" ")[:2][0], barcode.majorname.split(" ")[:2][1])
-        sub = "{} [{}+0]".format(barcode.majorname.split(" ")[2:3][0], barcode.subcode[0])
+        sub = "{} [{}+{}]".format(barcode.majorname.split(" ")[2:3][0], barcode.subcode[0], barcode.subcode[1])
         nickname = barcode.nickname
     elif "Wagon" in barcode.majorname:
         title = barcode.majorname
-        sub = "[{}+0]".format(barcode.subcode[1])
+        sub = "[{}+{}]".format(barcode.subcode[1], barcode.subcode[2])
         nickname = barcode.nickname
     elif "Twin" in barcode.nickname:
         title = barcode.nickname.split(" ")[0]
@@ -395,7 +395,33 @@ def produce_strips_module(barcodes, MAC="", preview=False):
     f.close()
 
     return l, zpl
-   
+
+def produce_strips_wagon(barcodes, preview=False):
+
+    if not os.path.isdir(barcodes[0].get_label_name()):
+        os.makedirs(barcodes[0].get_label_name())
+
+    l = myLabel(25.375, 53.975, dpmm=8.0)
+
+    left = 1.5875
+    top = 1.5875
+    spacing = 12.7
+
+    rows = 2 
+
+    for y in range(0, rows):
+        add_to_megalabel_wagon(l, barcodes[y], x_offset=left, y_offset=top+y*spacing)
+
+    zpl = l.dumpZPL()
+    if preview: 
+        l.preview()
+
+    with open("label.zpl", 'w') as f:
+        f.write(l.dumpZPL())
+    f.close()
+
+    return l, zpl
+
 def load_barcodes(barcode_list, wagon=False, tile=False, module=False, MAC="", ROC=""):
     
     zpl = ""

@@ -41,19 +41,12 @@ create table Sub_Type
 	sub_sn int(4) unsigned not null,
 	sub_code varchar(4) not null,
 	name varchar(50) not null,
-	identifier_name varchar(10) not null
-
+	identifier_name varchar(10) not null,
+    min_sn int(7)
 );
 
 create table Major_Sub_Stitch
 (
 	major_type_id int unsigned,
 	sub_type_id int unsigned
-);
-
-create table Serial_Contraint
-(
-    sub_type_id int unsigned not null,
-    lower int unsigned,
-    upper int unsigned
 );

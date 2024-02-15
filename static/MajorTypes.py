@@ -77,30 +77,30 @@ sub_ldmodule = {
     "Full, 200 um, CuW baseplate":         {"sub_sn": "021", "sub_code": "F2W"},
     "Full, 200 um, PCB baseplate":         {"sub_sn": "022", "sub_code": "F2P"},
     "Full, 200 um, Carbon Fiber baseplate":         {"sub_sn": "022", "sub_code": "F2C"},
-    "Right, 300 um, CuW baseplate":         {"sub_sn": "031", "sub_code": "R3W"},
-    "Right, 300 um, PCB baseplate":         {"sub_sn": "032", "sub_code": "R3P"},
-    "Right, 300 um, Carbon Fiber baseplate":         {"sub_sn": "032", "sub_code": "R3C"},
-    "Right, 200 um, CuW baseplate":         {"sub_sn": "021", "sub_code": "R2W"},
-    "Right, 200 um, PCB baseplate":         {"sub_sn": "022", "sub_code": "R2P"},
-    "Right, 200 um, Carbon Fiber baseplate":         {"sub_sn": "022", "sub_code": "R2C"},
-    "Top, 300 um, CuW baseplate":         {"sub_sn": "031", "sub_code": "T3W"},
-    "Top, 300 um, PCB baseplate":         {"sub_sn": "032", "sub_code": "T3P"},
-    "Top, 300 um, Carbon Fiber baseplate":         {"sub_sn": "032", "sub_code": "T3C"},
-    "Top, 200 um, CuW baseplate":         {"sub_sn": "021", "sub_code": "T2W"},
-    "Top, 200 um, PCB baseplate":         {"sub_sn": "022", "sub_code": "T2P"},
-    "Top, 200 um, Carbon Fiber baseplate":         {"sub_sn": "022", "sub_code": "T2C"},
-    "Left, 300 um, CuW baseplate":         {"sub_sn": "031", "sub_code": "L3W"},
-    "Left, 300 um, PCB baseplate":         {"sub_sn": "032", "sub_code": "L3P"},
-    "Left, 300 um, Carbon Fiber baseplate":         {"sub_sn": "032", "sub_code": "L3C"},
-    "Left, 200 um, CuW baseplate":         {"sub_sn": "021", "sub_code": "L2W"},
-    "Left, 200 um, PCB baseplate":         {"sub_sn": "022", "sub_code": "L2P"},
-    "Left, 200 um, Carbon Fiber baseplate":         {"sub_sn": "022", "sub_code": "L2C"},
-    "Five, 300 um, CuW baseplate":         {"sub_sn": "031", "sub_code": "53W"},
-    "Five, 300 um, PCB baseplate":         {"sub_sn": "032", "sub_code": "53P"},
-    "Five, 300 um, Carbon Fiber baseplate":         {"sub_sn": "032", "sub_code": "53C"},
-    "Five, 200 um, CuW baseplate":         {"sub_sn": "021", "sub_code": "52W"},
-    "Five, 200 um, PCB baseplate":         {"sub_sn": "022", "sub_code": "52P"},
-    "Five, 200 um, Carbon Fiber baseplate":         {"sub_sn": "022", "sub_code": "52C"},
+    "Right, 300 um, CuW baseplate":         {"sub_sn": "431", "sub_code": "R3W"},
+    "Right, 300 um, PCB baseplate":         {"sub_sn": "432", "sub_code": "R3P"},
+    "Right, 300 um, Carbon Fiber baseplate":         {"sub_sn": "432", "sub_code": "R3C"},
+    "Right, 200 um, CuW baseplate":         {"sub_sn": "421", "sub_code": "R2W"},
+    "Right, 200 um, PCB baseplate":         {"sub_sn": "422", "sub_code": "R2P"},
+    "Right, 200 um, Carbon Fiber baseplate":         {"sub_sn": "422", "sub_code": "R2C"},
+    "Top, 300 um, CuW baseplate":         {"sub_sn": "131", "sub_code": "T3W"},
+    "Top, 300 um, PCB baseplate":         {"sub_sn": "132", "sub_code": "T3P"},
+    "Top, 300 um, Carbon Fiber baseplate":         {"sub_sn": "132", "sub_code": "T3C"},
+    "Top, 200 um, CuW baseplate":         {"sub_sn": "121", "sub_code": "T2W"},
+    "Top, 200 um, PCB baseplate":         {"sub_sn": "122", "sub_code": "T2P"},
+    "Top, 200 um, Carbon Fiber baseplate":         {"sub_sn": "122", "sub_code": "T2C"},
+    "Left, 300 um, CuW baseplate":         {"sub_sn": "331", "sub_code": "L3W"},
+    "Left, 300 um, PCB baseplate":         {"sub_sn": "332", "sub_code": "L3P"},
+    "Left, 300 um, Carbon Fiber baseplate":         {"sub_sn": "332", "sub_code": "L3C"},
+    "Left, 200 um, CuW baseplate":         {"sub_sn": "321", "sub_code": "L2W"},
+    "Left, 200 um, PCB baseplate":         {"sub_sn": "322", "sub_code": "L2P"},
+    "Left, 200 um, Carbon Fiber baseplate":         {"sub_sn": "322", "sub_code": "L2C"},
+    "Five, 300 um, CuW baseplate":         {"sub_sn": "531", "sub_code": "53W"},
+    "Five, 300 um, PCB baseplate":         {"sub_sn": "532", "sub_code": "53P"},
+    "Five, 300 um, Carbon Fiber baseplate":         {"sub_sn": "532", "sub_code": "53C"},
+    "Five, 200 um, CuW baseplate":         {"sub_sn": "521", "sub_code": "52W"},
+    "Five, 200 um, PCB baseplate":         {"sub_sn": "522", "sub_code": "52P"},
+    "Five, 200 um, Carbon Fiber baseplate":         {"sub_sn": "522", "sub_code": "52C"},
 }
 
 sub_hdmodule = {
@@ -110,30 +110,30 @@ sub_hdmodule = {
     "Full, 120 um, CuW baseplate":         {"sub_sn": "011", "sub_code": "F1W"},
     "Full, 120 um, PCB baseplate":         {"sub_sn": "012", "sub_code": "F1P"},
     "Full, 120 um, Carbon Fiber baseplate":         {"sub_sn": "012", "sub_code": "F1C"},
-    "Right, 200 um, CuW baseplate":         {"sub_sn": "021", "sub_code": "R2W"},
-    "Right, 200 um, PCB baseplate":         {"sub_sn": "022", "sub_code": "R2P"},
-    "Right, 200 um, Carbon Fiber baseplate":         {"sub_sn": "022", "sub_code": "R2C"},
-    "Right, 120 um, CuW baseplate":         {"sub_sn": "011", "sub_code": "R1W"},
-    "Right, 120 um, PCB baseplate":         {"sub_sn": "012", "sub_code": "R1P"},
-    "Right, 120 um, Carbon Fiber baseplate":         {"sub_sn": "012", "sub_code": "R1C"},
-    "Top, 200 um, CuW baseplate":         {"sub_sn": "021", "sub_code": "T2W"},
-    "Top, 200 um, PCB baseplate":         {"sub_sn": "022", "sub_code": "T2P"},
-    "Top, 200 um, Carbon Fiber baseplate":         {"sub_sn": "022", "sub_code": "T2C"},
-    "Top, 120 um, CuW baseplate":         {"sub_sn": "011", "sub_code": "T1W"},
-    "Top, 120 um, PCB baseplate":         {"sub_sn": "012", "sub_code": "T1P"},
-    "Top, 120 um, Carbon Fiber baseplate":         {"sub_sn": "012", "sub_code": "T1C"},
-    "Left, 200 um, CuW baseplate":         {"sub_sn": "021", "sub_code": "L2W"},
-    "Left, 200 um, PCB baseplate":         {"sub_sn": "022", "sub_code": "L2P"},
-    "Left, 200 um, Carbon Fiber baseplate":         {"sub_sn": "022", "sub_code": "L2C"},
-    "Left, 120 um, CuW baseplate":         {"sub_sn": "011", "sub_code": "L1W"},
-    "Left, 120 um, PCB baseplate":         {"sub_sn": "012", "sub_code": "L1P"},
-    "Left, 120 um, Carbon Fiber baseplate":         {"sub_sn": "012", "sub_code": "L1C"},
-    "Five, 200 um, CuW baseplate":         {"sub_sn": "021", "sub_code": "52W"},
-    "Five, 200 um, PCB baseplate":         {"sub_sn": "022", "sub_code": "52P"},
-    "Five, 200 um, Carbon Fiber baseplate":         {"sub_sn": "022", "sub_code": "52C"},
-    "Five, 120 um, CuW baseplate":         {"sub_sn": "011", "sub_code": "51W"},
-    "Five, 120 um, PCB baseplate":         {"sub_sn": "012", "sub_code": "51P"},
-    "Five, 120 um, Carbon Fiber baseplate":         {"sub_sn": "012", "sub_code": "51C"},
+    "Right, 200 um, CuW baseplate":         {"sub_sn": "421", "sub_code": "R2W"},
+    "Right, 200 um, PCB baseplate":         {"sub_sn": "422", "sub_code": "R2P"},
+    "Right, 200 um, Carbon Fiber baseplate":         {"sub_sn": "422", "sub_code": "R2C"},
+    "Right, 120 um, CuW baseplate":         {"sub_sn": "411", "sub_code": "R1W"},
+    "Right, 120 um, PCB baseplate":         {"sub_sn": "412", "sub_code": "R1P"},
+    "Right, 120 um, Carbon Fiber baseplate":         {"sub_sn": "412", "sub_code": "R1C"},
+    "Top, 200 um, CuW baseplate":         {"sub_sn": "121", "sub_code": "T2W"},
+    "Top, 200 um, PCB baseplate":         {"sub_sn": "122", "sub_code": "T2P"},
+    "Top, 200 um, Carbon Fiber baseplate":         {"sub_sn": "122", "sub_code": "T2C"},
+    "Top, 120 um, CuW baseplate":         {"sub_sn": "111", "sub_code": "T1W"},
+    "Top, 120 um, PCB baseplate":         {"sub_sn": "112", "sub_code": "T1P"},
+    "Top, 120 um, Carbon Fiber baseplate":         {"sub_sn": "112", "sub_code": "T1C"},
+    "Left, 200 um, CuW baseplate":         {"sub_sn": "321", "sub_code": "L2W"},
+    "Left, 200 um, PCB baseplate":         {"sub_sn": "322", "sub_code": "L2P"},
+    "Left, 200 um, Carbon Fiber baseplate":         {"sub_sn": "322", "sub_code": "L2C"},
+    "Left, 120 um, CuW baseplate":         {"sub_sn": "311", "sub_code": "L1W"},
+    "Left, 120 um, PCB baseplate":         {"sub_sn": "312", "sub_code": "L1P"},
+    "Left, 120 um, Carbon Fiber baseplate":         {"sub_sn": "312", "sub_code": "L1C"},
+    "Five, 200 um, CuW baseplate":         {"sub_sn": "521", "sub_code": "52W"},
+    "Five, 200 um, PCB baseplate":         {"sub_sn": "522", "sub_code": "52P"},
+    "Five, 200 um, Carbon Fiber baseplate":         {"sub_sn": "522", "sub_code": "52C"},
+    "Five, 120 um, CuW baseplate":         {"sub_sn": "511", "sub_code": "51W"},
+    "Five, 120 um, PCB baseplate":         {"sub_sn": "512", "sub_code": "51P"},
+    "Five, 120 um, Carbon Fiber baseplate":         {"sub_sn": "512", "sub_code": "51C"},
 }
 
 sub_ldengine = {
@@ -183,12 +183,21 @@ sub_hdwagon = {
     "Straight 3 HDEH":       {"sub_sn": "3021", "sub_code": "30B1"},
     "Triangle 3 LT 1":       {"sub_sn": "3031", "sub_code": "30C1"},
     "Triangle 3 LT 2":       {"sub_sn": "3032", "sub_code": "30C2"},
-    "Straight 3 Small": {"sub_sn": "", "sub_code": "130C"},
     "Straight 3.5":     {"sub_sn": "3111", "sub_code": "31A1"},
     "J-Shaped 3.5":     {"sub_sn": "3121", "sub_code": "31B1"},
     "Straight 2":       {"sub_sn": "2011", "sub_code": "20A1"},
     "Straight 2.5 HDEF":     {"sub_sn": "2111", "sub_code": "21A1"},
-    "Straight 2.5 HDEH":     {"sub_sn": "2121", "sub_code": "21B1"}
+    "Straight 2.5 HDEH":     {"sub_sn": "2121", "sub_code": "21B1"},
+    "Straight 3 HDEF Bare":       {"sub_sn": "3019", "sub_code": "30AB"},
+    "Straight 3 HDEH Bare":       {"sub_sn": "3029", "sub_code": "30BB"},
+    "Triangle 3 LT 1 Bare":       {"sub_sn": "3039", "sub_code": "30CB"},
+    "Triangle 3 LT 2 Bare":       {"sub_sn": "3039", "sub_code": "30CB"},
+    "Straight 3.5 Bare":     {"sub_sn": "3119", "sub_code": "31AB"},
+    "Straight 3.5 Bare":     {"sub_sn": "3119", "sub_code": "31BB"},
+    "J-Shaped 3.5 Bare":     {"sub_sn": "3129", "sub_code": "31CB"},
+    "Straight 2 Bare":       {"sub_sn": "2019", "sub_code": "20AB"},
+    "Straight 2.5 HDEF Bare":     {"sub_sn": "2119", "sub_code": "21AB"},
+    "Straight 2.5 HDEH Bare":     {"sub_sn": "2129", "sub_code": "21BB"}
 }
 sub_econ = {
     "Full, ECON-T COB Proto":  {"sub_sn": "1111", "sub_code": "1F11"},
@@ -229,18 +238,55 @@ sub_tester = {
     "EngHI":        {"sub_sn": "0430", "sub_code": "0430", "name": "Engine Tester HD Interposer"}
 }
 
-sub_tile_2 = {
-        "":     {"sub_sn": "", "sub_code": ""},
+sub_tile = {
 }
 
-sub_tile_4 = {
-        "TPBC":       {"sub_sn": "{}{}{}{}", "sub_code": "{}{}{}{}"},
-        "TPBCNO":     {"sub_sn": "{}{}{}{}", "sub_code": "{}{}{}{}"},
-        "Twin-Ax Cable Type A":       {"sub_sn": "1112", "sub_code": "TXA2"},
-        "Twin-Ax Cable Type B":       {"sub_sn": "1122", "sub_code": "TXB2"},
-        "Twin-Ax Cable Type C":       {"sub_sn": "1132", "sub_code": "TXC2"},
-        "Twin-Ax Cable Type D":       {"sub_sn": "1142", "sub_code": "TXD2"},
+for size in range(1,100):
+    sub_tile["Tile Size {}".format(size)] = {"sub_sn": "{:0>2}".format(size), "sub_code": "{:0>2}".format(size)}
+
+sub_sipm = {
+    "SiPM 4 mm":    {"sub_sn": "04", "sub_code": "04"},
+    "SiPM 9 mm":    {"sub_sn": "09", "sub_code": "09"}
 }
+
+sub_tile_pcb = {
+        #"TPBC":       {"sub_sn": "{}{}{}{}", "sub_code": "{}{}{}{}"},
+        #"TPBCNO":     {"sub_sn": "{}{}{}{}", "sub_code": "{}{}{}{}"}
+}
+
+sub_tile_module = {
+}
+
+shape_list = ["", "A", "B", "C", "D", "E", "G", "J", "K"]
+rows = range(3,13)
+geo_list = ["", "L", "R", "F"]
+mat_list = ["", "C", "M"]
+
+for shape in range(1,9):
+    for row in rows:
+        for geo in range(1,4):
+
+            sub_tile_pcb["Shape {}, Row {}, {}".format(shape_list[shape], row, geo_list[geo])] = {"sub_sn": "{}{}{}9".format(shape, row if row < 10 else str(row)[-1], geo), "sub_code": "{}{}{}9".format(shape_list[shape], row if row < 10 else str(row)[-1], geo_list[geo])}
+            for mat in range (1, 3):
+                sub_tile_module["Shape {}, Row {}, {}, Material {}".format(shape_list[shape], row, geo_list[geo], mat_list[mat])] = {"sub_sn": "{}{}{}{}".format(shape, row if row < 10 else str(row)[-1], geo, mat), "sub_code": "{}{}{}{}".format(shape_list[shape], row if row < 10 else str(row)[-1], geo_list[geo], mat_list[mat])}
+ 
+
+sub_WM = {
+    "Mother Board":     {"sub_sn": "1001", "sub_code": "M001"},
+    "FH Wingboard":     {"sub_sn": "2011", "sub_code": "WFH1"},
+    "BH Wingboard":     {"sub_sn": "3011", "sub_code": "WBH1"}
+}
+
+sub_twin_ax = {
+        "Twin-Ax Cable Type A":       {"sub_sn": "1012", "sub_code": "TXA2"},
+        "Twin-Ax Cable Type B":       {"sub_sn": "1022", "sub_code": "TXB2"},
+        "Twin-Ax Cable Type C":       {"sub_sn": "1032", "sub_code": "TXC2"},
+        "Twin-Ax Cable Type D":       {"sub_sn": "1042", "sub_code": "TXD2"},
+        "Flex Cable":                 {"sub_sn": "2002", "sub_code": "FLX2"},
+        "Power Adapter Board FH":     {"sub_sn": "3102", "sub_code": "PFH2"},
+        "Power Adapter Board BH":     {"sub_sn": "3202", "sub_code": "PBH2"}
+}
+
 
 majortypes = {
     '':                              {"major_sn": 0, "major_code": "","subtypes": {"sub_sn": "None"}},
@@ -262,16 +308,16 @@ majortypes = {
     "DCDC Board":                    {"major_sn": 16, "major_code": "DC", "subtypes": sub_dcdc},
     "Zipper Board":                  {"major_sn": 17, "major_code": "ZP", "subtypes": sub_zipper},
     'Tester':                        {"major_sn": 90, "major_code": "TS","subtypes": sub_tester},
-    'Bare Cast Machined Tile':       {"major_sn": 20, "major_code": "BC","subtypes": None},
-    'Bare Injection-Molded Tile':    {"major_sn": 21, "major_code": "BI","subtypes": None},
-    'Wrapped Cast Machined Tile':    {"major_sn": 22, "major_code": "TC","subtypes": None},
-    'Wrapped Injection-Molded Tile': {"major_sn": 23, "major_code": "TI","subtypes": None},
-    'SiPM':                          {"major_sn": 24, "major_code": "SP","subtypes": None},
-    'Tile PCB w/o Components':       {"major_sn": 25, "major_code": "TP","subtypes": None},
-    'Tile PCB (TileBoard)':          {"major_sn": 26, "major_code": "TB","subtypes": None},
-    'Tile Module':                   {"major_sn": 27, "major_code": "TM","subtypes": None},
-    'Wingboard and Motherboard':     {"major_sn": 28, "major_code": "WM","subtypes": None},
-    'TB Cable':                      {"major_sn": 29, "major_code": "CB","subtypes": sub_tile_4},
+    'Bare Cast Machined Tile':       {"major_sn": 20, "major_code": "BC","subtypes": sub_tile},
+    'Bare Injection-Molded Tile':    {"major_sn": 21, "major_code": "BI","subtypes": sub_tile},
+    'Wrapped Cast Machined Tile':    {"major_sn": 22, "major_code": "TC","subtypes": sub_tile},
+    'Wrapped Injection-Molded Tile': {"major_sn": 23, "major_code": "TI","subtypes": sub_tile},
+    'SiPM':                          {"major_sn": 24, "major_code": "SP","subtypes": sub_sipm},
+    'Tile PCB w/o Components':       {"major_sn": 25, "major_code": "TP","subtypes": sub_tile_pcb},
+    'Tile PCB (TileBoard)':          {"major_sn": 26, "major_code": "TB","subtypes": sub_tile_pcb},
+    'Tile Module':                   {"major_sn": 27, "major_code": "TM","subtypes": sub_tile_module},
+    'Wingboard and Motherboard':     {"major_sn": 28, "major_code": "WM","subtypes": sub_WM},
+    'TB Cable':                      {"major_sn": 29, "major_code": "SC","subtypes": sub_twin_ax},
 
 }    
 

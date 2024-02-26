@@ -6,10 +6,10 @@ import os
 
 from PIL import ImageTk, Image
 from tkinter import ttk
-from static.MajorTypes import get_majortypes, get_subtypes, get_macs
+from static.MajorTypes import get_majortypes, get_subtypes, get_macs, get_vendors, get_assemblers, get_shapes
 from make_label_gui import load_barcodes
 from stash_printed import Stasher
-
+from argparse import ArgumentParser
 
 # Class to make previewing widget of labels
 class LabelPreview(tk.Frame):
@@ -97,7 +97,7 @@ class PrintOut(tk.Frame):
 # Class to create and control all of the input for labels
 class InputWidgets(tk.Frame):
 
-    def __init__(self, parent, preview, printout, *args, **kwargs):
+    def __init__(self, parent, preview, printout, borders, *args, **kwargs):
 
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.grid_propagate(0)
@@ -105,6 +105,8 @@ class InputWidgets(tk.Frame):
         self.preview = preview
         self.printout = printout
         self.temp_widgets = []
+
+        self.borders = borders
 
         self.pack(side = "left", padx=20, pady=20, fill=tk.BOTH, expand=True)
 
@@ -246,6 +248,139 @@ class InputWidgets(tk.Frame):
         self.temp_widgets.append(self.proto_radio)
 
         self.make_btn["command"] = self.get_label
+        self.printout.repack_print()
+
+    def create_hexaboard_inputs(self):
+
+        os.system("lp -d Zebra -o raw setLabelLength_Nominal.zpl")
+
+        self.clear_temp_widgets()
+
+        self.sub_combo["state"] = "disable"
+
+        self.rows_frame = tk.Frame(self.input_frame)
+        self.rows_frame.pack(padx=20, pady=5, fill=tk.X)
+
+        self.temp_widgets.append(self.rows_frame)
+
+        self.num_frame = tk.Frame(self.input_frame)
+        self.num_frame.pack(padx=20, pady=5, fill=tk.X)
+
+        self.temp_widgets.append(self.num_frame)
+
+        self.roc_frame = tk.Frame(self.input_frame)
+        self.roc_frame.pack(padx=20, pady=5, fill=tk.X)
+
+        self.temp_widgets.append(self.roc_frame)
+
+        self.prod_frame = tk.Frame(self.input_frame)
+        self.prod_frame.pack(padx=20, pady=5, fill=tk.X)
+        
+        self.temp_widgets.append(self.prod_frame)
+
+        self.sn_frame = tk.Frame(self.input_frame)
+        self.sn_frame.pack(padx=20, pady=5, fill=tk.X)
+
+        self.temp_widgets.append(self.sn_frame)
+
+        self.num_lbl = tk.Label(self.num_frame, text="Number of Labels:", font =('Ariel', 16))
+        self.num_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.num_lbl)
+
+        self.num = tk.StringVar()
+        self.num_spin = tk.Spinbox(self.num_frame, from_=14, to=10000, increment=14, textvariable=self.num, state="normal")
+        self.num_spin.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.num_spin)
+
+        self.gen_lbl = tk.Label(self.roc_frame, text="Generation:", font=('Ariel', 16))
+        self.gen_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.gen_lbl)
+
+        self.gen_num = tk.StringVar()
+        self.gen_combo = ttk.Combobox(self.roc_frame, textvariable=self.gen_num, values = list(range(0,5)))
+        self.gen_combo.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.gen_combo)
+
+        self.roc_lbl = tk.Label(self.roc_frame, text="ROC Version:", font=('Ariel', 16))
+        self.roc_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.roc_lbl)
+
+        self.roc_num = tk.StringVar()
+        self.roc_combo = ttk.Combobox(self.roc_frame, textvariable=self.roc_num, values = ['2', '4', 'C'])
+        self.roc_combo.pack(side="left", padx=20, pady=5)
+
+        #self.roc_spin = tk.Spinbox(self.roc_frame, from_=1, to=10, increment=1, textvariable=self.roc_num, state="normal")
+        #self.roc_spin.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.roc_combo)
+
+        self.vendor_lbl = tk.Label(self.prod_frame, text="PCB Vendor:", font=('Ariel', 16))
+        self.vendor_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.vendor_lbl)
+
+        self.vendor = tk.StringVar()
+        self.vendor_combo = ttk.Combobox(self.prod_frame, textvariable=self.vendor, values = list(get_vendors().keys()))
+        self.vendor_combo.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.vendor_combo)
+
+        self.assembler_lbl = tk.Label(self.prod_frame, text="Assembler:", font=('Ariel', 16))
+        self.assembler_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.assembler_lbl)
+
+        self.assembler = tk.StringVar()
+        self.assembler_combo = ttk.Combobox(self.prod_frame, textvariable=self.assembler, values = list(get_assemblers().keys()))
+        self.assembler_combo.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.assembler_combo)
+
+        #self.prod_lbl = tk.Label(self.prod_frame, text="Production Version:", font=('Ariel', 16))
+        #self.prod_lbl.pack(side="left", padx=20, pady=5)
+
+        #self.temp_widgets.append(self.prod_lbl)
+
+        #self.prod = tk.StringVar()
+        #self.prod_radio = tk.Radiobutton(self.prod_frame, text="Production", variable=self.prod, value="Production")
+        #self.prod_radio.pack(side="left", padx=20, pady=5)
+
+        #self.temp_widgets.append(self.prod_radio)
+
+        #self.proto_radio = tk.Radiobutton(self.prod_frame, text="Prototype", variable=self.prod, value="Prototype")
+        #self.proto_radio.pack(side="left", padx=20, pady=5)
+
+        #self.temp_widgets.append(self.proto_radio)
+
+        self.shape_lbl = tk.Label(self.sn_frame, text="Shape:", font=('Ariel', 16))
+        self.shape_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.shape_lbl)
+
+        self.shape = tk.StringVar()
+        self.shape_combo = ttk.Combobox(self.sn_frame, textvariable=self.shape, values = list(get_shapes().keys()))
+        self.shape_combo.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.shape_combo)
+
+        self.temp_widgets.append(self.vendor_combo)
+        self.sn_lbl = tk.Label(self.sn_frame, text="S/N:", font =('Ariel', 16))
+        self.sn_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.sn_lbl)
+
+        self.sn = tk.StringVar()
+        self.sn_spin = tk.Spinbox(self.sn_frame, from_=1, to=999999, textvariable=self.sn, state="normal")
+        self.sn_spin.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.sn_spin)
+
+        self.make_btn["command"] = self.get_label_hexaboard
         self.printout.repack_print()
 
     def create_tile_inputs(self):
@@ -474,12 +609,12 @@ class InputWidgets(tk.Frame):
 
         print("Making Labels...")
         if lbl_info[0]["major_sn"] in ["12", "13", "14", "15", "29"]:
-            zpl, barcodes = load_barcodes(lbl_info, wagon=True)
-        elif lbl_info[0]["major_sn"] in ["1","2","3","4","5","6","7","8","9"]:
+            zpl, barcodes = load_barcodes(lbl_info, wagon=True, borders = self.borders)
+        elif lbl_info[0]["major_sn"] in ["8","9"]:
             print(self.mac.get(), self.roc_num.get())
-            zpl, barcodes = load_barcodes(lbl_info, module=True, MAC=get_macs()[self.mac.get()]["mac_code"], ROC=self.roc_num.get())
+            zpl, barcodes = load_barcodes(lbl_info, module=True, MAC=get_macs()[self.mac.get()]["mac_code"], ROC=self.roc_num.get(), borders = self.borders)
         else:
-            zpl, barcodes = load_barcodes(lbl_info)
+            zpl, barcodes = load_barcodes(lbl_info, borders = self.borders)
 
         self.stasher = Stasher(barcodes)
         overlap, serial = self.stasher.search()
@@ -537,7 +672,7 @@ class InputWidgets(tk.Frame):
         print(lbl_info)
 
         print("Making Labels...")
-        zpl, barcodes = load_barcodes(lbl_info, tile=True)
+        zpl, barcodes = load_barcodes(lbl_info, tile=True, borders = self.borders)
 
         self.stasher = Stasher(barcodes)
         overlap, serial = self.stasher.search()
@@ -561,6 +696,75 @@ class InputWidgets(tk.Frame):
        
         for i in barcodes:
             self.printout.update_text("Making label with S/N: {}".format(i.full_serial))
+
+    def get_label_hexaboard(self):
+        
+        lbl_info = self.get_label_info_hexaboard()
+        print(lbl_info)
+
+        print("Making Labels...")
+        zpl, barcodes = load_barcodes(lbl_info, hexaboard=True, borders = self.borders)
+
+        self.stasher = Stasher(barcodes)
+        overlap, serial = self.stasher.search()
+
+        if overlap:
+            message = "The following serial numbers have already been printed:\n"
+            for s in serial:
+                message += "{}\n".format(s)
+            message += "Continue anyway?"
+            override = tkinter.messagebox.askyesno('Warning!', message)
+            if not override: return
+            else:
+                override = tkinter.messagebox.askyesno('Final Warning!', 'You are risking printing the same label twice which could cause major confusion. Are you sure?')
+                if not override: return
+
+        with open("tmp/tmp.zpl", 'w') as f:
+            f.write(zpl)
+        f.close()
+
+        self.preview.update_img_widget()
+       
+        for i in barcodes:
+            self.printout.update_text("Making label with S/N: {}".format(i.full_serial))
+
+    def get_label_info_hexaboard(self):
+
+        majortypes = self.get_majortypes()
+        subtypes = self.get_subtypes()
+
+        roc_version = self.roc_num.get()
+        gen_version = self.gen_num.get()
+
+        shape = self.shape.get()
+        vendor = self.vendor.get()
+        assembler = self.assembler.get()
+
+        shape_code = get_shapes()[shape]["shape_code"]
+        vendor_code = get_vendors()[vendor]["vendor_code"]
+        assembler_code = get_assemblers()[assembler]["assembler_code"]
+
+        self.label_info = []
+
+        num_lbl = int(self.num.get())
+        start = int(self.sn.get())
+        adjust_serial = 0
+
+        for i in range(start, start+num_lbl):
+            temp_lbl_info = {}
+            temp_lbl_info["major_sn"] = str(majortypes[self.majortype.get()]["major_sn"])
+            #temp_lbl_info["sub_sn"] = str(subtypes[self.subtype.get()]["sub_sn"])
+            #temp_lbl_info["pcb_vendor"] = get_vendors()[vendor]["vendor_code"]
+            #temp_lbl_info["assembler"] = get_vendors()[assembler]["assembler_code"]
+            temp_lbl_info["sn"] = i - adjust_serial
+            temp_lbl_info["major_name"] = self.majortype.get()
+            temp_lbl_info["major_code"] = majortypes[self.majortype.get()]["major_code"]
+            temp_lbl_info["sub_name"] = "{}{} {} {}{}".format(shape_code, gen_version, roc_version, vendor_code, assembler_code)
+            temp_lbl_info["sub_code"] = "{}{}{}{}{}".format(shape_code, gen_version, roc_version, vendor_code, assembler_code)
+            self.label_info.append(temp_lbl_info)
+
+        print(self.label_info)       
+        return self.label_info
 
     def get_label_info_tile(self):
 
@@ -626,6 +830,8 @@ class InputWidgets(tk.Frame):
             self.create_tile_inputs()
         elif "Module" in self.majortype.get():
             self.create_module_inputs()
+        elif "Hexaboard" in self.majortype.get():
+            self.create_hexaboard_inputs()
         else:
             self.create_general_inputs()
 
@@ -644,20 +850,35 @@ class LabelMakerApp(tk.Frame):
 
     def __init__(self, parent, *args, **kwargs):
 
+        self.borders = kwargs["borders"]
+        temp_kwargs = {}
+        for key,item in kwargs.items():
+            if key != "borders":
+                temp_kwargs[key] = item
+
+        kwargs = temp_kwargs
+
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
 
         self.lbl_preview = LabelPreview(self.parent, width=600, height=1100, highlightbackground="black", highlightthickness = 2)
         self.printout = PrintOut(self.parent)
-        self.lbl_inputs = InputWidgets(self.parent, self.lbl_preview, self.printout, width=1100, height = 1100, highlightbackground="black", highlightthickness = 2)
+        self.lbl_inputs = InputWidgets(self.parent, self.lbl_preview, self.printout, borders = self.borders,width=1100, height = 1100, highlightbackground="black", highlightthickness = 2)
 
 
 
 if __name__ == "__main__":
+
+    parser = ArgumentParser()
+
+    parser.add_argument("--borders", action="store_true", default=False, help="Show borders around labels in preview (will also print)")
+
+    args = parser.parse_args()
+
     root = tk.Tk()
 
     root.geometry("1800x1200")
 
-    LabelMakerApp(root)
+    LabelMakerApp(root, borders = args.borders)
 
     root.mainloop()

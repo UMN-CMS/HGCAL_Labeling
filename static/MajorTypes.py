@@ -36,27 +36,27 @@ for mat in range(1,4):
             sub_baseplate["BA{}".format(sub_code)] = {"sub_sn": sub_sn, "sub_code": sub_code, "name": name}
 
 sub_ldhexaboard = {
-    "XLF01":         {"sub_sn": "001", "sub_code": "F01", "name": "Full V2", "lower":00000},
-    "XLF02":         {"sub_sn": "002", "sub_code": "F02", "name": "Full NSH", "lower":00500},
-    "XLF03":         {"sub_sn": "003", "sub_code": "F03", "name": "Full V3", "lower":01000},
+    "XLF01":         {"sub_sn": "001", "sub_code": "F01", "name": "Full V2", "lower":0},
+    "XLF02":         {"sub_sn": "002", "sub_code": "F02", "name": "Full NSH", "lower":500},
+    "XLF03":         {"sub_sn": "003", "sub_code": "F03", "name": "Full V3", "lower":1000},
     "XLF10":         {"sub_sn": "010", "sub_code": "F10", "name": "Full Production", "lower":10000},
 
-    "XLT03":         {"sub_sn": "103", "sub_code": "T03", "name": "Half Top V3", "lower":05000},
+    "XLT03":         {"sub_sn": "103", "sub_code": "T03", "name": "Half Top V3", "lower":5000},
     "XLT10":         {"sub_sn": "110", "sub_code": "T10", "name": "Half Top Production", "lower":50000},
-    "XLB03":         {"sub_sn": "203", "sub_code": "B03", "name": "Half Bottom V3", "lower":05500},
+    "XLB03":         {"sub_sn": "203", "sub_code": "B03", "name": "Half Bottom V3", "lower":5500},
     "XLB10":         {"sub_sn": "210", "sub_code": "B10", "name": "Half Bottom Production", "lower":55000},
 
-    "XLL03":         {"sub_sn": "303", "sub_code": "L03", "name": "Semi Left V3", "lower":06000},
+    "XLL03":         {"sub_sn": "303", "sub_code": "L03", "name": "Semi Left V3", "lower":6000},
     "XLL10":         {"sub_sn": "310", "sub_code": "L10", "name": "Semi Left Production", "lower":60000},
-    "XLR03":         {"sub_sn": "403", "sub_code": "R03", "name": "Semi Right V3", "lower":06500},
+    "XLR03":         {"sub_sn": "403", "sub_code": "R03", "name": "Semi Right V3", "lower":6500},
     "XLR10":         {"sub_sn": "410", "sub_code": "R10", "name": "Semi Right Production", "lower":65000},
 
-    "XL503":         {"sub_sn": "503", "sub_code": "503", "name": "Five V3", "lower":07000},
+    "XL503":         {"sub_sn": "503", "sub_code": "503", "name": "Five V3", "lower":7000},
     "XL510":         {"sub_sn": "510", "sub_code": "510", "name": "Five Production", "lower":70000},
 }
 
 sub_hdhexaboard = {
-    "XHF03":         {"sub_sn": "003", "sub_code": "F03", "name": "Full V3", "lower":07500},
+    "XHF03":         {"sub_sn": "003", "sub_code": "F03", "name": "Full V3", "lower":7500},
     "XHF10":         {"sub_sn": "010", "sub_code": "F10", "name": "Full Production", "lower":75000},
 
     "XHT03":         {"sub_sn": "103", "sub_code": "T03", "name": "Top (Half Minus) V3", "lower":8500},
@@ -330,6 +330,27 @@ MACs = {
     'TTU':  {'mac_code': "TT"},
 }
 
+hexaboard_vendors = {
+    'Plotech':      {'vendor_code': "P"},
+    'HiQ':          {'vendor_code': "Q"},
+    'Micropack':    {'vendor_code': "M"},
+}
+
+hexaboard_assemblers = {
+    'Unassembled':  {'assembler_code': "U"},
+    'Hybrid SA':    {'assembler_code': "H"},
+    'Piotech':      {'assembler_code': "P"},
+}
+
+hexaboard_shapes = {
+    'Full':     {'shape_code': "F"},
+    'Top':      {'shape_code': "T"},
+    'Bottom':   {'shape_code': "B"},
+    'Left':     {'shape_code': "L"},
+    'Right':    {'shape_code': "R"},
+    'Five':     {'shape_code': "5"},
+}
+
 def get_majortypes():
     return majortypes
 
@@ -338,3 +359,12 @@ def get_subtypes(key):
 
 def get_macs():
     return MACs
+
+def get_vendors():
+    return hexaboard_vendors
+
+def get_assemblers():
+    return hexaboard_assemblers
+
+def get_shapes():
+    return hexaboard_shapes

@@ -203,11 +203,16 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
             megalabel.origin(0.25+x_offset,0.75+y_offset)
             megalabel.write_text(barcode.shape_gen, char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
             megalabel.endorigin()
-
-            megalabel.origin(0.25+x_offset, 3.25+y_offset)
-            megalabel.reverse_print()
-            megalabel.draw_box(18, 16, thickness=18)
-            megalabel.endorigin()
+            
+            if barcode.roc == '2':
+                megalabel.origin(0.25+x_offset, 3.25+y_offset)
+                megalabel.reverse_print()
+                megalabel.draw_box(18, 16, thickness=18)
+                megalabel.endorigin()
+            elif barcode.roc == 'C':
+                megalabel.origin(0.25+x_offset, 3.25+y_offset)
+                megalabel.draw_box(18, 16, thickness=1)
+                megalabel.endorigin()
 
             megalabel.origin(0.25+x_offset,3.75+y_offset)
             megalabel.write_text(barcode.roc, char_height=2, char_width=2, line_width=8, orientation='R', justification='L')

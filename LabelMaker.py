@@ -31,7 +31,7 @@ class LabelPreview(tk.Frame):
 
         self.im = ImageTk.PhotoImage(Image.open(im_path))
         
-        self.im_lbl = tk.Label(self, image = self.im, width = 700, height = 600)
+        self.im_lbl = tk.Label(self, image = self.im, width = 700, height = 600) #height 600
         self.im_lbl.pack(fill=tk.X)
 
         self.update_btn = tk.Button(self, text = "Update", font=('Ariel', 24), command=self.update_img_widget)
@@ -110,7 +110,7 @@ class InputWidgets(tk.Frame):
 
         self.pack(side = "left", padx=20, pady=20, fill=tk.BOTH, expand=True)
 
-        self.top_lbl = tk.Label(self, text = "Label Information", font=('Ariel', 48))
+        self.top_lbl = tk.Label(self, text = "Label Information", font=('Ariel', 12))
         self.top_lbl.pack(padx=20, pady=20)
 
         self.create_input_widgets()
@@ -861,9 +861,9 @@ class LabelMakerApp(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
 
-        self.lbl_preview = LabelPreview(self.parent, width=600, height=1100, highlightbackground="black", highlightthickness = 2)
+        self.lbl_preview = LabelPreview(self.parent, width=600, height=1100, highlightbackground="black", highlightthickness = 2) #change height from 1100 to 650
         self.printout = PrintOut(self.parent)
-        self.lbl_inputs = InputWidgets(self.parent, self.lbl_preview, self.printout, borders = self.borders,width=1100, height = 1100, highlightbackground="black", highlightthickness = 2)
+        self.lbl_inputs = InputWidgets(self.parent, self.lbl_preview, self.printout, borders = self.borders,width=1100, height = 1100, highlightbackground="black", highlightthickness = 2) #change height from 1100 to 500
 
 
 
@@ -877,7 +877,7 @@ if __name__ == "__main__":
 
     root = tk.Tk()
 
-    root.geometry("1800x1200")
+    root.geometry("1800x1200") #originally 1800x1200
 
     LabelMakerApp(root, borders = args.borders)
 

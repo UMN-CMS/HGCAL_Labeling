@@ -66,9 +66,6 @@ class Barcode:
             self.shape_gen = str(self.nickname[0])
             self.roc = self.nickname[1]
             self.va = " ".join(self.nickname[2:])
-            print("Subcode:", self.subcode)
-            print("Code:", self.code)
-            print("nickname:", self.nickname)
         else:
             self.subtype = "{:02d}".format(int(label_dict['major_sn'])) + label_dict['sub_sn']
             self.subcode = label_dict["sub_code"]
@@ -200,27 +197,27 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
             megalabel.draw_box(76, 76, thickness=1, color='B', rounding=2)
             megalabel.endorigin()
         if hexaboard:
-            megalabel.origin(0.25+x_offset,0.75+y_offset)
+            megalabel.origin(0.50+x_offset,0.85+y_offset)
             megalabel.write_text(barcode.shape_gen, char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
             megalabel.endorigin()
             
             if barcode.roc == '2':
-                megalabel.origin(0.25+x_offset, 3.25+y_offset)
+                megalabel.origin(0.75+x_offset, 3.25+y_offset)
                 megalabel.reverse_print()
-                megalabel.draw_box(18, 16, thickness=18)
+                megalabel.draw_box(14.5, 16, thickness=14)
                 megalabel.endorigin()
             elif barcode.roc == 'C':
                 megalabel.origin(0.25+x_offset, 3.25+y_offset)
                 megalabel.draw_box(18, 16, thickness=1)
                 megalabel.endorigin()
 
-            megalabel.origin(0.25+x_offset,3.75+y_offset)
+            megalabel.origin(0.50+x_offset,3.75+y_offset)
             megalabel.write_text(barcode.roc, char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
             megalabel.endorigin()
 
             megalabel.reverse_print(active='N')
 
-            megalabel.origin(0.25+x_offset,5.75+y_offset)
+            megalabel.origin(0.50+x_offset,5.65+y_offset)
             megalabel.write_text(barcode.va, char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
             megalabel.endorigin()
 

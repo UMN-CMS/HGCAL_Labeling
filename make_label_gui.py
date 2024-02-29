@@ -62,6 +62,13 @@ class Barcode:
             self.subcode = label_dict["sub_code"]
             self.code = label_dict["major_code"] + label_dict["sub_code"]
             self.full_serial = self.first + self.code + "{:05d}".format(int(self.serial))
+            self.nickname = self.nickname.split(" ")
+            self.shape_gen = str(self.nickname[0])
+            self.roc = self.nickname[1]
+            self.va = " ".join(self.nickname[2:])
+            print("Subcode:", self.subcode)
+            print("Code:", self.code)
+            print("nickname:", self.nickname)
         else:
             self.subtype = "{:02d}".format(int(label_dict['major_sn'])) + label_dict['sub_sn']
             self.subcode = label_dict["sub_code"]
@@ -192,9 +199,29 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
             megalabel.origin(-0.125+x_offset,-0.125+y_offset)
             megalabel.draw_box(76, 76, thickness=1, color='B', rounding=2)
             megalabel.endorigin()
+        if hexaboard:
+            megalabel.origin(0.25+x_offset,0.75+y_offset)
+            megalabel.write_text(barcode.shape_gen, char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
+            megalabel.endorigin()
 
-        megalabel.origin(0.25+x_offset,0.75+y_offset)
-        megalabel.write_text(barcode.get_label_name(), char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
+            megalabel.origin(0.25+x_offset, 3.25+y_offset)
+            megalabel.reverse_print()
+            megalabel.draw_box(18, 16, thickness=18)
+            megalabel.endorigin()
+
+            megalabel.origin(0.25+x_offset,3.75+y_offset)
+            megalabel.write_text(barcode.roc, char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
+            megalabel.endorigin()
+
+            megalabel.reverse_print(active='N')
+
+            megalabel.origin(0.25+x_offset,5.75+y_offset)
+            megalabel.write_text(barcode.va, char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
+            megalabel.endorigin()
+
+        if not hexaboard:
+            megalabel.origin(0.25+x_offset,0.75+y_offset)
+            megalabel.write_text(barcode.get_label_name(), char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
     megalabel.endorigin()
 
     if tile:
@@ -210,8 +237,9 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
         megalabel.origin(4.5+x_offset, 14.0+y_offset) #Changed char height & width from 2.5 to 3 and line width from 10 to 12.5
         megalabel.write_text("B{:04d} #{:01d}".format(int(barcode.batch),int(barcode.serial)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='R')
     elif hexaboard:
-        megalabel.origin(2.75+x_offset, 7.00+y_offset)
-        megalabel.write_text("{}{:04d}".format(barcode.vendor, int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
+        megalabel.reverse_print(active='N')
+        megalabel.origin(0.25+x_offset, 7.00+y_offset)
+        megalabel.write_text("{:05d}".format(int(barcode.serial)), char_height=2, char_width=2, line_width=8.50, orientation='N', justification='R')
     else:
         megalabel.origin(2.75+x_offset, 7.00+y_offset)
         megalabel.write_text("{:06d}".format(int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
@@ -361,8 +389,12 @@ def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875,
 
 def produce_strips(barcodes, tile=False, hexaboard=False, preview=False, borders=False):
 
-    if not os.path.isdir(barcodes[0].get_label_name()):
-        os.makedirs(barcodes[0].get_label_name())
+    if hexaboard:
+        if not os.path.isdir(barcodes[0].get_label_name()[0]+barcodes[0].get_label_name()[1]+barcodes[0].get_label_name()[2]):
+            os.makedirs(barcodes[0].get_label_name()[0]+barcodes[0].get_label_name()[1]+barcodes[0].get_label_name()[2])
+    else:
+        if not os.path.isdir(barcodes[0].get_label_name()):
+            os.makedirs(barcodes[0].get_label_name())
 
 
     if tile:

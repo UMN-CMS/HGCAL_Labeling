@@ -9,8 +9,8 @@ create table Label
 	sub_type_id int unsigned, 
 	creation_date datetime,
 	order_id int not null,
-	primary key (board_id),
-	unique(full_sn)
+	primary key (label_id),
+	unique(full_label)
 );
 
 create table Order_Info
@@ -41,8 +41,8 @@ create table Sub_Type
 	sub_sn int(4) unsigned not null,
 	sub_code varchar(4) not null,
 	name varchar(50) not null,
-	identifyer_name varchar(10) not null
-
+	identifier_name varchar(10) not null,
+    min_sn int(7)
 );
 
 create table Major_Sub_Stitch

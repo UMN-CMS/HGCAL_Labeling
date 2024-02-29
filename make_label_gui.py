@@ -34,7 +34,7 @@ class myLabel(Label):
 
 class Barcode:
     
-    def __init__(self, label_dict, tile=False, module=False, MAC="", ROC="", production=False):
+    def __init__(self, label_dict, tile=False, module=False, hexaboard=False, MAC="", ROC="", vendor="", production=False):
         self.serial = str(label_dict['sn'])
 
         self.first = '320' #if not label_dict['prod'] else '320'
@@ -58,11 +58,19 @@ class Barcode:
             print(self.full_serial)
             self.roc_version = ROC
             self.thickness = "300um" if label_dict['sub_sn'][1] is "3" else "200um"
+        elif hexaboard:
+            self.subcode = label_dict["sub_code"]
+            self.code = label_dict["major_code"] + label_dict["sub_code"]
+            self.full_serial = self.first + self.code + "{:05d}".format(int(self.serial))
         else:
             self.subtype = "{:02d}".format(int(label_dict['major_sn'])) + label_dict['sub_sn']
             self.subcode = label_dict["sub_code"]
             self.code = label_dict["major_code"] + label_dict["sub_code"]
-            self.full_serial = self.first + self.code + "{:06d}".format(int(self.serial))
+            if vendor != "":
+                self.full_serial = self.first + self.code + "{}{:05d}".format(vendor, int(self.serial))
+                self.vendor = vendor
+            else:
+                self.full_serial = self.first + self.code + "{:06d}".format(int(self.serial))
         
     def get_nickname(self):
 
@@ -169,18 +177,28 @@ def produce_wagon_barcode(barcode, barcode_dict, x_offset=0, y_offset=0):
 
     return l
 
-def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=False):
+def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=False, hexaboard=False, borders=False):
 
     if tile:
-        megalabel.origin(1.25+x_offset,0.00+y_offset)
+        if borders:
+            megalabel.origin(-0.125+x_offset,-0.125+y_offset)
+            megalabel.draw_box(153, 153, thickness=1, color='B', rounding=2)
+            megalabel.endorigin()
+
+        megalabel.origin(1.25+x_offset,2.5+y_offset)
         megalabel.write_text(barcode.get_label_name(), char_height=2.5, char_width=2.5, line_width=16, orientation='R', justification='L')
     else:
+        if borders:
+            megalabel.origin(-0.125+x_offset,-0.125+y_offset)
+            megalabel.draw_box(76, 76, thickness=1, color='B', rounding=2)
+            megalabel.endorigin()
+
         megalabel.origin(0.25+x_offset,0.75+y_offset)
         megalabel.write_text(barcode.get_label_name(), char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
     megalabel.endorigin()
 
     if tile:
-        megalabel.origin(6.0+x_offset, 0.25+y_offset) #Changed x offset from 4.5 to 6 and y off set from 0.75 to 0.25
+        megalabel.origin(6.0+x_offset, 2.5+y_offset) #Changed x offset from 4.5 to 6 and y off set from 0.75 to 0.25
         megalabel.write_datamatrix(height=5, orientation='N', sq=200, aspect=1)
     else:
         megalabel.origin(2.75+x_offset, 0.75+y_offset)
@@ -189,18 +207,22 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
     megalabel.endorigin()
 
     if tile:
-        megalabel.origin(4.5+x_offset, 11.5+y_offset) #Changed char height & width from 2.5 to 3 and line width from 10 to 12.5
+        megalabel.origin(4.5+x_offset, 14.0+y_offset) #Changed char height & width from 2.5 to 3 and line width from 10 to 12.5
         megalabel.write_text("B{:04d} #{:01d}".format(int(barcode.batch),int(barcode.serial)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='R')
+    elif hexaboard:
+        megalabel.origin(2.75+x_offset, 7.00+y_offset)
+        megalabel.write_text("{}{:04d}".format(barcode.vendor, int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
     else:
         megalabel.origin(2.75+x_offset, 7.00+y_offset)
         megalabel.write_text("{:06d}".format(int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
     megalabel.endorigin()
     
-def add_to_megalabel_module(megalabel, barcode, x_offset=1.5875, y_offset=1.5875):
+def add_to_megalabel_module(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, borders=False):
 
-    #megalabel.origin(-0.125+x_offset,-0.125+y_offset)
-    #megalabel.draw_box(102, 89, thickness=1, color='B', rounding=0)
-    #megalabel.endorigin()
+    if borders:
+        megalabel.origin(-0.125+x_offset,-0.125+y_offset)
+        megalabel.draw_box(102, 89, thickness=1, color='B', rounding=2)
+        megalabel.endorigin()
 
     megalabel.origin(0.50+x_offset,0.50+y_offset)
     megalabel.write_text("{} {}{}".format(barcode.major_code, barcode.sub_code, barcode.roc_version), char_height=2, char_width=2, line_width=12, orientation='N', justification='C')
@@ -246,25 +268,35 @@ def add_to_megalabel_module(megalabel, barcode, x_offset=1.5875, y_offset=1.5875
     #megalabel.write_text("B{:04d} #{:01d}".format(int(barcode.batch),int(barcode.serial)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='R')
     #megalabel.endorigin()
 
-def add_to_megalabel_tile(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=False):
+def add_to_megalabel_tile(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=False, borders=False):
 
-    megalabel.origin(0.25+x_offset,0.75+y_offset)
+    if borders:
+        megalabel.origin(-0.125+x_offset,-0.125+y_offset)
+        megalabel.draw_box(153, 153, thickness=1, color='B', rounding=2)
+        megalabel.endorigin()
+
+    megalabel.origin(0.25+x_offset,1.75+y_offset)
     megalabel.write_text(barcode.get_label_name(), char_height=2, char_width=2, line_width=8, orientation='R', justification='L')
     megalabel.endorigin()
 
-    megalabel.origin(2.75+x_offset, 0.75+y_offset)
+    megalabel.origin(2.75+x_offset, 1.75+y_offset)
     megalabel.write_datamatrix(height=3, orientation='N', sq=200, aspect=1)
     megalabel.write_text('{}'.format(barcode.full_serial))
     megalabel.endorigin()
 
-    megalabel.origin(2.75+x_offset, 7.00+y_offset)
+    megalabel.origin(2.75+x_offset, 8.00+y_offset)
     if tile:
         megalabel.write_text("{:04d}:{:01d}".format(int(barcode.batch),int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
     else:
         megalabel.write_text("{:06d}".format(int(barcode.serial)), char_height=2, char_width=2, line_width=6.00, orientation='N', justification='R')
     megalabel.endorigin()
     
-def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875):
+def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875, borders=False):
+
+    if borders:
+        megalabel.origin(-0.125+x_offset,-0.125+y_offset)
+        megalabel.draw_box(400, 76, thickness=1, color='B', rounding=2)
+        megalabel.endorigin()
 
     megalabel.origin(1.75+x_offset, 1.75+y_offset)
     megalabel.write_datamatrix(height=3, orientation='N', sq=200, aspect=1)
@@ -293,9 +325,11 @@ def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875)
         sub = barcode.nickname.split(" ")[1] 
     else:
         title = "Con Mezz"
-        sub = barcode.nickname.replace(",", " ").split(" ")[1] 
-        nickname = barcode.nickname.split(",")[1][1:]
-
+        sub = barcode.nickname.replace(",", " ").split(" ")[1].replace("-", " ")
+        try:
+            nickname = barcode.nickname.split(",")[1][1:]
+        except: 
+            nickname = barcode.nickname.split(" ")[0]
     megalabel.origin(12+x_offset, 1.8+y_offset)
     megalabel.write_text(title, char_height=3, char_width=3, line_width=40, orientation='N', justification='L')
     megalabel.endorigin()
@@ -325,7 +359,7 @@ def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875)
     #megalabel.preview()
     
 
-def produce_strips(barcodes, tile=False, preview=False):
+def produce_strips(barcodes, tile=False, hexaboard=False, preview=False, borders=False):
 
     if not os.path.isdir(barcodes[0].get_label_name()):
         os.makedirs(barcodes[0].get_label_name())
@@ -353,7 +387,7 @@ def produce_strips(barcodes, tile=False, preview=False):
     for y in range(0, rows):
         for x in range(0, cols):
             if y*cols + x == len(barcodes): break
-            add_to_megalabel(l, barcodes[y*cols+x], x_offset=left+x*spacing, y_offset=top+y*spacing, tile=tile)
+            add_to_megalabel(l, barcodes[y*cols+x], x_offset=left+x*spacing, y_offset=top+y*spacing, tile=tile, hexaboard=hexaboard, borders=borders)
 
     zpl = l.dumpZPL()
     if preview: 
@@ -365,7 +399,7 @@ def produce_strips(barcodes, tile=False, preview=False):
 
     return l, zpl
    
-def produce_strips_module(barcodes, MAC="", preview=False):
+def produce_strips_module(barcodes, MAC="", preview=False, borders=False):
 
     if not os.path.isdir(barcodes[0].get_label_name()):
         os.makedirs(barcodes[0].get_label_name())
@@ -384,7 +418,7 @@ def produce_strips_module(barcodes, MAC="", preview=False):
     for y in range(0, rows):
         for x in range(0, cols):
             if y*cols + x == len(barcodes): break
-            add_to_megalabel_module(l, barcodes[y*cols+x], x_offset=left+x*x_spacing, y_offset=top+y*y_spacing)
+            add_to_megalabel_module(l, barcodes[y*cols+x], x_offset=left+x*x_spacing, y_offset=top+y*y_spacing, borders=borders)
 
     zpl = l.dumpZPL()
     if preview: 
@@ -396,7 +430,7 @@ def produce_strips_module(barcodes, MAC="", preview=False):
 
     return l, zpl
 
-def produce_strips_wagon(barcodes, preview=False):
+def produce_strips_wagon(barcodes, preview=False, borders=False):
 
     if not os.path.isdir(barcodes[0].get_label_name()):
         os.makedirs(barcodes[0].get_label_name())
@@ -410,7 +444,7 @@ def produce_strips_wagon(barcodes, preview=False):
     rows = 2 
 
     for y in range(0, rows):
-        add_to_megalabel_wagon(l, barcodes[y], x_offset=left, y_offset=top+y*spacing)
+        add_to_megalabel_wagon(l, barcodes[y], x_offset=left, y_offset=top+y*spacing, borders=borders)
 
     zpl = l.dumpZPL()
     if preview: 
@@ -422,7 +456,7 @@ def produce_strips_wagon(barcodes, preview=False):
 
     return l, zpl
 
-def load_barcodes(barcode_list, wagon=False, tile=False, module=False, MAC="", ROC=""):
+def load_barcodes(barcode_list, wagon=False, tile=False, module=False, hexaboard=False, MAC="", ROC="", borders=False):
     
     zpl = ""
 
@@ -432,7 +466,7 @@ def load_barcodes(barcode_list, wagon=False, tile=False, module=False, MAC="", R
         for i in range(0,len(barcode_list),2):
             barcodes = [Barcode(x) for x in barcode_list[i:i+2]]
             should_preview = i + 2 == len(barcode_list)
-            l, temp_zpl = produce_strips_wagon(barcodes, preview=should_preview)
+            l, temp_zpl = produce_strips_wagon(barcodes, preview=should_preview, borders=borders)
 
             all_barcodes += barcodes
             zpl = temp_zpl + "\n" + zpl
@@ -440,7 +474,7 @@ def load_barcodes(barcode_list, wagon=False, tile=False, module=False, MAC="", R
         for i in range(0,len(barcode_list),8): #Changed from 14 to 8
             barcodes = [Barcode(x, tile=tile) for x in barcode_list[i:i+8]] #Changed from 14 to 8
             should_preview = i + 8 == len(barcode_list)
-            l, temp_zpl = produce_strips(barcodes, tile=True, preview=should_preview)
+            l, temp_zpl = produce_strips(barcodes, tile=True, preview=should_preview, borders=borders)
 
             all_barcodes += barcodes
             zpl = temp_zpl + "\n" + zpl
@@ -448,15 +482,23 @@ def load_barcodes(barcode_list, wagon=False, tile=False, module=False, MAC="", R
         for i in range(0,len(barcode_list),10):
             barcodes = [Barcode(x, module=True, MAC=MAC, ROC=ROC) for x in barcode_list[i:i+10]] 
             should_preview = i + 10 == len(barcode_list)
-            l, temp_zpl = produce_strips_module(barcodes, preview=should_preview)
+            l, temp_zpl = produce_strips_module(barcodes, preview=should_preview, borders=borders)
 
             all_barcodes += barcodes
             zpl = temp_zpl + "\n" + zpl
+    elif hexaboard:
+        for i in range(0,len(barcode_list),14):
+            barcodes = [Barcode(x, hexaboard=True) for x in barcode_list[i:i+14]]
+            should_preview = i + 14 == len(barcode_list)
+            l, temp_zpl = produce_strips(barcodes, hexaboard=True, preview=should_preview, borders=borders)
+
+            zpl = temp_zpl + "\n" + zpl
+            all_barcodes += barcodes
     else:
         for i in range(0,len(barcode_list),14):
             barcodes = [Barcode(x) for x in barcode_list[i:i+14]]
             should_preview = i + 14 == len(barcode_list)
-            l, temp_zpl = produce_strips(barcodes, preview=should_preview)
+            l, temp_zpl = produce_strips(barcodes, preview=should_preview, borders=borders)
 
             zpl = temp_zpl + "\n" + zpl
             all_barcodes += barcodes

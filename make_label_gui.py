@@ -255,7 +255,7 @@ def add_to_megalabel_module(megalabel, barcode, x_offset=1.5875, y_offset=1.5875
         megalabel.endorigin()
 
     megalabel.origin(0.50+x_offset,0.50+y_offset)
-    megalabel.write_text("{} {}{}".format(barcode.major_code, barcode.sub_code, barcode.roc_version), char_height=2, char_width=2, line_width=12, orientation='N', justification='C')
+    megalabel.write_text("{} {} {}".format(barcode.major_code, barcode.sub_code, barcode.roc_version), char_height=2, char_width=2, line_width=12, orientation='N', justification='C')
     megalabel.endorigin()
 
     megalabel.origin(0.50+x_offset,2.50+y_offset)

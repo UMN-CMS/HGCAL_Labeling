@@ -39,14 +39,18 @@ class Barcode:
 
         self.first = '320' #if not label_dict['prod'] else '320'
         self.majorname = label_dict["major_name"]
+        print("MAJORNAME: ", self.majorname)
         self.nickname = label_dict["sub_name"]
 
         if tile:
             self.subtype = "{:02d}".format(int(label_dict['major_sn'])) + "{:02d}".format(int(label_dict['size'])) + "{:04d}".format(int(label_dict['batch']))
             self.batch = int(label_dict['batch'])
+            self.size = "{:02d}".format(int(label_dict['size']))
             self.subcode = "{:02d}".format(int(label_dict['size'])) + "{:04d}".format(int(label_dict['batch']))
+            self.mag = label_dict['mag_code']
             self.code = label_dict["major_code"] + self.subcode
-            self.full_serial = self.first + self.code + "{:04d}".format(int(self.serial))
+            self.full_serial = self.first + self.code + self.mag + "{:03d}".format(int(self.serial))
+            print("FULL SERIAL: ", self.full_serial)
         elif module:
             self.subtype = "{:02d}".format(int(label_dict['major_sn'])) + "{:03d}".format(int(label_dict['sub_sn']))
             self.subcode = label_dict["major_code"] + label_dict['sub_code']+ ROC 
@@ -189,8 +193,8 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
             megalabel.draw_box(153, 153, thickness=1, color='B', rounding=2)
             megalabel.endorigin()
 
-        megalabel.origin(1.25+x_offset,2.5+y_offset)
-        megalabel.write_text(barcode.get_label_name(), char_height=2.5, char_width=2.5, line_width=16, orientation='R', justification='L')
+        megalabel.origin(2.25+x_offset,2.5+y_offset)
+        megalabel.write_text(barcode.get_label_name(), char_height=2.5, char_width=2.5, line_width=16, orientation='N', justification='L')
     else:
         if borders:
             megalabel.origin(-0.125+x_offset,-0.125+y_offset)
@@ -236,8 +240,30 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
     megalabel.endorigin()
 
     if tile:
-        megalabel.origin(4.5+x_offset, 14.0+y_offset) #Changed char height & width from 2.5 to 3 and line width from 10 to 12.5
-        megalabel.write_text("B{:04d} #{:01d}".format(int(barcode.batch),int(barcode.serial)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='R')
+        megalabel.origin(1.75+x_offset, 5.5+y_offset)
+#        megalabel.write_text("B{:04d} #{:01d}".format(int(barcode.batch),int(barcode.serial)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='R')
+        megalabel.write_text("{:04d}".format(int(barcode.batch)), char_height=3, char_width=3, line_width=12.5, orientation='R', justification='L')
+        megalabel.endorigin()
+
+        megalabel.origin(4+x_offset, 14.0+y_offset)
+        megalabel.write_text("{}.{:03d}".format(str(barcode.mag), int(barcode.serial)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='R')
+        megalabel.endorigin()
+
+        megalabel.origin(3+x_offset, 14.0+y_offset)
+        megalabel.write_text("{:02d}".format(int(barcode.size)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='L')
+        megalabel.endorigin()
+
+        if barcode.majorname == 'Bare Cast Machined Tile':
+            megalabel.origin(2.25+x_offset, 13.0+y_offset)
+            megalabel.reverse_print()
+            megalabel.draw_box(35, 35, thickness=30)
+            megalabel.endorigin()
+        else:
+            megalabel.origin(2.25+x_offset, 13.0+y_offset)
+            megalabel.draw_box(35, 35, thickness=1)
+            megalabel.endorigin()
+ 
+        megalabel.reverse_print(active='N')
     elif hexaboard:
         megalabel.reverse_print(active='N')
         megalabel.origin(0.25+x_offset, 7.00+y_offset)

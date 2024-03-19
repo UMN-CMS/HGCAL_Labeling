@@ -351,6 +351,16 @@ hexaboard_shapes = {
     'Five':     {'shape_code': "5"},
 }
 
+tileboard_magazines = {
+    'A':     {'magazine_code': "A"},
+    'B':     {'magazine_code': "B"},
+    'C':     {'magazine_code': "C"},
+    'D':     {'magazine_code': "D"},
+    'E':     {'magazine_code': "E"},
+    'F':     {'magazine_code': "F"},
+    'G':     {'magzine_code': "G"},
+}
+
 def get_majortypes():
     return majortypes
 
@@ -368,3 +378,6 @@ def get_assemblers():
 
 def get_shapes():
     return hexaboard_shapes
+
+def get_magazines():
+    return tileboard_magazines

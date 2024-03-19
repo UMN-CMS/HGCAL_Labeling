@@ -6,7 +6,7 @@ import os
 
 from PIL import ImageTk, Image
 from tkinter import ttk
-from static.MajorTypes import get_majortypes, get_subtypes, get_macs, get_vendors, get_assemblers, get_shapes
+from static.MajorTypes import get_majortypes, get_subtypes, get_macs, get_vendors, get_assemblers, get_shapes, get_magazines
 from make_label_gui import load_barcodes
 from stash_printed import Stasher
 from argparse import ArgumentParser
@@ -403,13 +403,26 @@ class InputWidgets(tk.Frame):
 
         self.temp_widgets.append(self.num_frame)
 
+        ##########
+        self.magazine_lbl = tk.Label(self.num_frame, text="Magazine:", font=('Ariel', 16))
+        self.magazine_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.magazine_lbl)
+
+        self.magazine = tk.StringVar()
+        self.magazine_spin = ttk.Combobox(self.num_frame, textvariable=self.magazine, state="normal", values = list(get_magazines().keys()))
+        self.magazine_spin.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.magazine_spin)
+        #############
+
         self.num_lbl = tk.Label(self.num_frame, text="Number of Labels:", font =('Ariel', 16))
         self.num_lbl.pack(side="left", padx=20, pady=5)
 
         self.temp_widgets.append(self.num_lbl)
 
         self.num = tk.StringVar()
-        self.num_spin = tk.Spinbox(self.num_frame, from_=14, to=1000, increment=14, textvariable=self.num, state="normal")
+        self.num_spin = tk.Spinbox(self.num_frame, from_=8, to=1000, increment=8, textvariable=self.num, state="normal")
         self.num_spin.pack(side="left", padx=20, pady=5)
 
         self.temp_widgets.append(self.num_spin)
@@ -435,6 +448,7 @@ class InputWidgets(tk.Frame):
         self.batch_spin.pack(side="left", padx=20, pady=5)
 
         self.temp_widgets.append(self.batch_spin)
+
 
         self.sn_frame = tk.Frame(self.input_frame)
         self.sn_frame.pack(side="left", padx=20, pady=5)
@@ -771,7 +785,8 @@ class InputWidgets(tk.Frame):
         majortypes = self.get_majortypes()
         size = self.size.get()
         batch = self.batch.get()
-
+        magazine = self.magazine.get()
+        magazine_code = get_magazines()[magazine]["magazine_code"]
         self.label_info = []
 
         num_lbl = int(self.num.get())
@@ -789,7 +804,9 @@ class InputWidgets(tk.Frame):
             temp_lbl_info["sn"] = i - adjust_serial
             temp_lbl_info["major_name"] = self.majortype.get()
             temp_lbl_info["major_code"] = majortypes[self.majortype.get()]["major_code"]
-            temp_lbl_info["sub_name"] = "Cast Sheet QC"
+            temp_lbl_info["sub_name"] = "PL"
+            temp_lbl_info["mag_code"] = "{}".format(magazine_code)
+#            temp_lbl_info["sub_code"] = "{}.{:03d}".format(magazine_code, temp_lbl_info["sn"])
             self.label_info.append(temp_lbl_info)
 
         print(self.label_info)       
@@ -844,6 +861,8 @@ class InputWidgets(tk.Frame):
     def get_subtypes(self):
         return get_subtypes(self.majortype.get())
 
+    def get_magazines(self):
+        return get_magazines()
 
 # Main application class
 class LabelMakerApp(tk.Frame):

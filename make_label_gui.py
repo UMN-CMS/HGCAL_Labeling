@@ -35,11 +35,11 @@ class myLabel(Label):
 class Barcode:
     
     def __init__(self, label_dict, tile=False, module=False, hexaboard=False, MAC="", ROC="", vendor="", production=False):
+        print("In __init__ in class Barcode")
         self.serial = str(label_dict['sn'])
 
         self.first = '320' #if not label_dict['prod'] else '320'
         self.majorname = label_dict["major_name"]
-        print("MAJORNAME: ", self.majorname)
         self.nickname = label_dict["sub_name"]
 
         if tile:
@@ -194,7 +194,10 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
             megalabel.endorigin()
 
         megalabel.origin(2.25+x_offset,2.5+y_offset)
-        megalabel.write_text(barcode.get_label_name(), char_height=2.5, char_width=2.5, line_width=16, orientation='N', justification='L')
+        if barcode.majorname == 'Tile Module':
+            megalabel.write_text(barcode.get_label_name(), char_height=2.5, char_width=2.5, line_width=16, orientation='R', justification='L')
+        else:
+            megalabel.write_text(barcode.get_label_name(), char_height=2.5, char_width=2.5, line_width=16, orientation='N', justification='L')
     else:
         if borders:
             megalabel.origin(-0.125+x_offset,-0.125+y_offset)
@@ -253,7 +256,7 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
         megalabel.write_text("{:02d}".format(int(barcode.size)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='L')
         megalabel.endorigin()
 
-        if barcode.majorname == 'Bare Cast Machined Tile':
+        if barcode.majorname == 'Tile Module':
             megalabel.origin(2.25+x_offset, 13.0+y_offset)
             megalabel.reverse_print()
             megalabel.draw_box(35, 35, thickness=30)
@@ -413,7 +416,43 @@ def add_to_megalabel_wagon(megalabel, barcode, x_offset=2.0875, y_offset=1.5875,
     #    f.write(l.dumpZPL())
     #f.close()
     #megalabel.preview()
-    
+   
+def add_to_megalabel_flex(megalabel, barcode, x_offset=2.0875, y_offset=1.5875, borders=False):
+    print("Inside add_to_megalabel_flex")
+    if borders:
+        megalabel.origin(-0.125+x_offset,-0.125+y_offset)
+        megalabel.draw_box(203, 51, thickness=1, color='B', rounding=2)
+        megalabel.endorigin()
+
+    megalabel.origin(1.75+x_offset, 1+y_offset)
+    megalabel.write_datamatrix(height=2.5, orientation='N', sq=200, aspect=1)
+    megalabel.write_text('{}'.format(barcode.full_serial))
+    megalabel.endorigin()
+
+    megalabel.origin(7.5+x_offset, 1.2+y_offset)
+    megalabel.write_text(barcode.subcode, char_height=2, char_width=2, line_width=10, orientation='N', justification='C')
+    megalabel.endorigin()
+
+    megalabel.origin(9.75+x_offset, 0.775+y_offset)
+    megalabel.draw_box(45, 22, thickness=2, color='B', rounding=0)
+    megalabel.endorigin()
+
+#    megalabel.origin(13+x_offset, y_offset)
+#    megalabel.draw_box(2, 50, thickness=1, color='B', rounding=0)
+#    megalabel.endorigin()
+
+#    megalabel.origin(28+x_offset, 1.8+y_offset)
+#    megalabel.write_text("\"{}\"".format(nickname), char_height=3, char_width=3, line_width=40, orientation='N', justification='L')
+#    megalabel.endorigin()
+
+    megalabel.origin(7.5+x_offset, 3.7+y_offset)
+    megalabel.write_text("S/N: {:06d}".format(int(barcode.serial)), char_height=2, char_width=2, line_width=40, orientation='N', justification='L')
+    megalabel.endorigin()
+
+    megalabel.origin(19.5+x_offset, 1+y_offset)
+    megalabel.write_datamatrix(height=2.5, orientation='N', sq=200, aspect=1)
+    megalabel.write_text('{}'.format(barcode.full_serial))
+    megalabel.endorigin()
 
 def produce_strips(barcodes, tile=False, hexaboard=False, preview=False, borders=False):
 
@@ -516,8 +555,39 @@ def produce_strips_wagon(barcodes, preview=False, borders=False):
 
     return l, zpl
 
-def load_barcodes(barcode_list, wagon=False, tile=False, module=False, hexaboard=False, MAC="", ROC="", borders=False):
-    
+def produce_strips_flex(barcodes, preview=False, borders=False):
+
+    print("Inside produce_strips_flex")
+
+    if not os.path.isdir(barcodes[0].get_label_name()):
+        os.makedirs(barcodes[0].get_label_name())
+
+    l = myLabel(19.375, 28.375, dpmm=8.0)
+
+    left = 1.5875
+    top = 1.5875
+    spacing = 9.5
+
+    rows = 2
+
+#    print("ROWS", rows)
+    for y in range(0, rows):
+        add_to_megalabel_flex(l, barcodes[y], x_offset=left, y_offset=top+y*spacing, borders=borders)
+
+    zpl = l.dumpZPL()
+    if preview:
+        l.preview()
+
+    with open("label.zpl", 'w') as f:
+        f.write(l.dumpZPL())
+    f.close()
+
+    return l, zpl
+
+def load_barcodes(barcode_list, wagon=False, flex=False, tile=False, module=False, hexaboard=False, MAC="", ROC="", borders=False):
+
+    print("Inside load_barcodes")
+
     zpl = ""
 
     all_barcodes = []
@@ -530,9 +600,19 @@ def load_barcodes(barcode_list, wagon=False, tile=False, module=False, hexaboard
 
             all_barcodes += barcodes
             zpl = temp_zpl + "\n" + zpl
+    elif flex:
+        for i in range(0,len(barcode_list),2):
+            barcodes = [Barcode(x) for x in barcode_list[i:i+2]]
+            should_preview = i + 2 == len(barcode_list)
+            l, temp_zpl = produce_strips_flex(barcodes, preview=should_preview, borders=borders)
+
+            all_barcodes += barcodes
+            zpl = temp_zpl + "\n" + zpl
     elif tile:
         for i in range(0,len(barcode_list),8): #Changed from 14 to 8
             barcodes = [Barcode(x, tile=tile) for x in barcode_list[i:i+8]] #Changed from 14 to 8
+            print("i:", i)
+            print("len:", len(barcode_list))
             should_preview = i + 8 == len(barcode_list)
             l, temp_zpl = produce_strips(barcodes, tile=True, preview=should_preview, borders=borders)
 

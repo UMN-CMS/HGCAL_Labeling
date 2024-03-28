@@ -282,7 +282,8 @@ sub_twin_ax = {
         "Twin-Ax Cable Type B":       {"sub_sn": "1022", "sub_code": "TXB2"},
         "Twin-Ax Cable Type C":       {"sub_sn": "1032", "sub_code": "TXC2"},
         "Twin-Ax Cable Type D":       {"sub_sn": "1042", "sub_code": "TXD2"},
-        "Flex Cable":                 {"sub_sn": "2002", "sub_code": "FLX2"},
+        "Flex Cable FH":              {"sub_sn": "2103", "sub_code": "FFH3"},
+        "Flex Cable BH":              {"sub_sn": "2203", "sub_code": "FBH3"},
         "Power Adapter Board FH":     {"sub_sn": "3102", "sub_code": "PFH2"},
         "Power Adapter Board BH":     {"sub_sn": "3202", "sub_code": "PBH2"}
 }
@@ -351,6 +352,8 @@ hexaboard_shapes = {
     'Five':     {'shape_code': "5"},
 }
 
+magazine_list = ["A", "B", "C", "D", "E", "F", "G"]
+
 tileboard_magazines = {
     'A':     {'magazine_code': "A"},
     'B':     {'magazine_code': "B"},
@@ -358,7 +361,7 @@ tileboard_magazines = {
     'D':     {'magazine_code': "D"},
     'E':     {'magazine_code': "E"},
     'F':     {'magazine_code': "F"},
-    'G':     {'magzine_code': "G"},
+    'G':     {'magazine_code': "G"},
 }
 
 def get_majortypes():
@@ -380,4 +383,4 @@ def get_shapes():
     return hexaboard_shapes
 
 def get_magazines():
-    return tileboard_magazines
+    return magazine_list

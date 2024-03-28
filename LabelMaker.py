@@ -125,6 +125,7 @@ class InputWidgets(tk.Frame):
         self.temp_widgets = []
 
     def create_input_widgets(self):
+        print("In LabelMaker.py: create_input_widgets")
 
         os.system("lp -d Zebra -o raw setLabelLength_Nominal.zpl")
 
@@ -152,10 +153,13 @@ class InputWidgets(tk.Frame):
         self.sub_combo.pack(side="left", padx=20, pady=5)
         self.majortype.trace('w', self.enable_subtype)
 
+        print(self.sub_combo.get(), "!!")
+
         self.make_btn = tk.Button(self, text="Make Labels", font=('Ariel', 16), command=self.get_label)
         self.make_btn.pack(padx=20, pady=20)
 
         self.printout = PrintOut(self)
+        print(self.printout)
 
     def create_module_inputs(self):
 
@@ -404,13 +408,13 @@ class InputWidgets(tk.Frame):
         self.temp_widgets.append(self.num_frame)
 
         ##########
-        self.magazine_lbl = tk.Label(self.num_frame, text="Magazine:", font=('Ariel', 16))
+        self.magazine_lbl = tk.Label(self.num_frame, text="Initial Magazine:", font=('Ariel', 12))
         self.magazine_lbl.pack(side="left", padx=20, pady=5)
 
         self.temp_widgets.append(self.magazine_lbl)
 
         self.magazine = tk.StringVar()
-        self.magazine_spin = ttk.Combobox(self.num_frame, textvariable=self.magazine, state="normal", values = list(get_magazines().keys()))
+        self.magazine_spin = ttk.Combobox(self.num_frame, textvariable=self.magazine, state="normal", values = list(get_magazines()))
         self.magazine_spin.pack(side="left", padx=20, pady=5)
 
         self.temp_widgets.append(self.magazine_spin)
@@ -427,6 +431,7 @@ class InputWidgets(tk.Frame):
 
         self.temp_widgets.append(self.num_spin)
 
+####################################################################################
         self.size_lbl = tk.Label(self.rows_frame, text="Size:", font=('Ariel', 16))
         self.size_lbl.pack(side="left", padx=20, pady=5)
         
@@ -449,7 +454,7 @@ class InputWidgets(tk.Frame):
 
         self.temp_widgets.append(self.batch_spin)
 
-
+#################################################
         self.sn_frame = tk.Frame(self.input_frame)
         self.sn_frame.pack(side="left", padx=20, pady=5)
 
@@ -463,8 +468,22 @@ class InputWidgets(tk.Frame):
         self.sn = tk.StringVar()
         self.sn_spin = tk.Spinbox(self.sn_frame, from_=1, to=999999, textvariable=self.sn, state="normal")
         self.sn_spin.pack(side="left", padx=20, pady=5)
+        if self.majortype.get().find("Tile PCB") != -1:
+            self.create_tile_pcb_mod_inputs("PCB")
 
         self.temp_widgets.append(self.sn_spin)
+###
+        self.nummag_lbl = tk.Label(self.sn_frame, text="Number of Labels/Magazine:", font =('Ariel', 12))
+        self.nummag_lbl.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.nummag_lbl)
+
+        self.nummag = tk.StringVar()
+        self.nummag_spin = tk.Spinbox(self.sn_frame, from_=1, to=1000, textvariable=self.nummag, state="normal")
+        self.nummag_spin.pack(side="left", padx=20, pady=5)
+
+        self.temp_widgets.append(self.nummag_spin)
+##
 
         self.make_btn["command"] = self.get_label_tile
         self.printout.repack_print()
@@ -616,14 +635,21 @@ class InputWidgets(tk.Frame):
 
     # Function for parsing input and making new label
     def get_label(self):
-        
+        print("LabelMaker.py: get_label") 
+
         lbl_info = self.get_label_info()
 
         print(lbl_info)
 
         print("Making Labels...")
-        if lbl_info[0]["major_sn"] in ["12", "13", "14", "15", "29"]:
+        if lbl_info[0]["major_sn"] in ["12", "13", "14", "15"]: #remove 29
             zpl, barcodes = load_barcodes(lbl_info, wagon=True, borders = self.borders)
+        elif lbl_info[0]["major_sn"] in ["29"]:
+            if lbl_info[0]["sub_code"] in ["FFH3"] or lbl_info[0]["sub_code"] in ["FBH3"]:
+                os.system("lp -d Zebra -o raw setLabelLength_Flex.zpl")
+                zpl, barcodes = load_barcodes(lbl_info, flex=True, borders = self.borders)
+            else:
+                zpl, barcodes = load_barcodes(lbl_info, wagon=True, borders = self.borders)
         elif lbl_info[0]["major_sn"] in ["8","9"]:
             print(self.mac.get(), self.roc_num.get())
             zpl, barcodes = load_barcodes(lbl_info, module=True, MAC=get_macs()[self.mac.get()]["mac_code"], ROC=self.roc_num.get(), borders = self.borders)
@@ -785,30 +811,40 @@ class InputWidgets(tk.Frame):
         majortypes = self.get_majortypes()
         size = self.size.get()
         batch = self.batch.get()
-        magazine = self.magazine.get()
-        magazine_code = get_magazines()[magazine]["magazine_code"]
+        startmag = self.magazine.get()
+        mag_index = get_magazines().index(startmag) 
+#        print("!!!!", magindex)
         self.label_info = []
-
+        magperlab = int(self.nummag.get())
         num_lbl = int(self.num.get())
         start = int(self.sn.get())
         adjust_serial = 0
+        adjust_mag = 0
+        label_count = 0
 
         for i in range(start, start+num_lbl):
-            if i % 8 == start and i != start:
-                batch = str(int(batch) + 1)
-                adjust_serial += 8
+            print("i:", i)
+            if i % magperlab == start and i != start:
+                adjust_serial += magperlab
+            print("Adjust serial:", adjust_serial)
             temp_lbl_info = {}
             temp_lbl_info["major_sn"] = str(majortypes[self.majortype.get()]["major_sn"])
             temp_lbl_info["size"] = str(size)
             temp_lbl_info["batch"] = str(batch)
             temp_lbl_info["sn"] = i - adjust_serial
+            print("i - adjust_serial (SN):", temp_lbl_info["sn"])
             temp_lbl_info["major_name"] = self.majortype.get()
             temp_lbl_info["major_code"] = majortypes[self.majortype.get()]["major_code"]
-            temp_lbl_info["sub_name"] = "PL"
-            temp_lbl_info["mag_code"] = "{}".format(magazine_code)
-#            temp_lbl_info["sub_code"] = "{}.{:03d}".format(magazine_code, temp_lbl_info["sn"])
+            if temp_lbl_info["major_code"] == "TC":
+                temp_lbl_info["sub_name"] = "PL"
+            else:
+                temp_lbl_info["sub_name"] = "B"
+       
+            mag_index = (i-1) // (magperlab)
+            print("Mag index:", mag_index)
+            temp_lbl_info["mag_code"] = "{}".format(get_magazines()[mag_index])
+            print("Mag Code:", temp_lbl_info["mag_code"])
             self.label_info.append(temp_lbl_info)
-
         print(self.label_info)       
         return self.label_info
     #Helper functions to make interface nicer
@@ -861,7 +897,7 @@ class InputWidgets(tk.Frame):
     def get_subtypes(self):
         return get_subtypes(self.majortype.get())
 
-    def get_magazines(self):
+    def get_mag(self):
         return get_magazines()
 
 # Main application class

@@ -194,9 +194,7 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
             megalabel.endorigin()
 
         megalabel.origin(2.25+x_offset,2.5+y_offset)
-        if barcode.majorname == 'Tile Module':
-            megalabel.write_text(barcode.get_label_name(), char_height=2.5, char_width=2.5, line_width=16, orientation='R', justification='L')
-        else:
+        if barcode.majorname == 'Wrapped Cast Machined Tile':
             megalabel.write_text(barcode.get_label_name(), char_height=2.5, char_width=2.5, line_width=16, orientation='N', justification='L')
     else:
         if borders:
@@ -243,9 +241,13 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
     megalabel.endorigin()
 
     if tile:
-        megalabel.origin(1.75+x_offset, 5.5+y_offset)
 #        megalabel.write_text("B{:04d} #{:01d}".format(int(barcode.batch),int(barcode.serial)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='R')
-        megalabel.write_text("{:04d}".format(int(barcode.batch)), char_height=3, char_width=3, line_width=12.5, orientation='R', justification='L')
+        if barcode.majorname == 'Wrapped Injection-Molded Tile':
+            megalabel.origin(2.25+x_offset,2.5+y_offset) 
+            megalabel.write_text("B#{:04d}".format(int(barcode.batch)), char_height=3, char_width=3, line_width=12.5, orientation='R', justification='L')
+        else:
+            megalabel.origin(1.75+x_offset, 5.5+y_offset)
+            megalabel.write_text("{:04d}".format(int(barcode.batch)), char_height=3, char_width=3, line_width=12.5, orientation='R', justification='L')
         megalabel.endorigin()
 
         megalabel.origin(4+x_offset, 14.0+y_offset)
@@ -256,7 +258,7 @@ def add_to_megalabel(megalabel, barcode, x_offset=1.5875, y_offset=1.5875, tile=
         megalabel.write_text("{:02d}".format(int(barcode.size)), char_height=3, char_width=3, line_width=12.5, orientation='N', justification='L')
         megalabel.endorigin()
 
-        if barcode.majorname == 'Tile Module':
+        if barcode.majorname == 'Wrapped Injection-Molded Tile':
             megalabel.origin(2.25+x_offset, 13.0+y_offset)
             megalabel.reverse_print()
             megalabel.draw_box(35, 35, thickness=30)

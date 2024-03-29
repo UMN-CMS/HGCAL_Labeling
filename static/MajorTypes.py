@@ -244,6 +244,8 @@ sub_tile = {
 for size in range(0,100, 2):
     sub_tile["BH/LD Tile Size {}".format(size)] = {"sub_sn": "{:0>2}".format(size), "sub_code": "{:0>2}".format(size)}
 
+sub_tile["BH/LD Tile Size {}".format(99)] = {"sub_sn": "{:0>2}".format(99), "sub_code": "{:0>2}".format(99)}
+
 for size in range(1, 8):
     sub_tile["FH/HD Tile Size {}".format(size)] = {"sub_sn": "F{}".format(size), "sub_code": "F{}".format(size)}
 

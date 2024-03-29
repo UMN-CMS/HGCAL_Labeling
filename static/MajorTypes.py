@@ -241,7 +241,7 @@ sub_tester = {
 sub_tile = {
 }
 
-for size in range(1,100):
+for size in range(0,100):
     sub_tile["Tile Size {}".format(size)] = {"sub_sn": "{:0>2}".format(size), "sub_code": "{:0>2}".format(size)}
 
 sub_sipm = {

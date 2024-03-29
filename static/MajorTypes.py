@@ -241,8 +241,14 @@ sub_tester = {
 sub_tile = {
 }
 
-for size in range(0,100):
-    sub_tile["Tile Size {}".format(size)] = {"sub_sn": "{:0>2}".format(size), "sub_code": "{:0>2}".format(size)}
+for size in range(0,100, 2):
+    sub_tile["BH/LD Tile Size {}".format(size)] = {"sub_sn": "{:0>2}".format(size), "sub_code": "{:0>2}".format(size)}
+
+for size in range(1, 8):
+    sub_tile["FH/HD Tile Size {}".format(size)] = {"sub_sn": "F{}".format(size), "sub_code": "F{}".format(size)}
+
+for size in range(1, 6):
+    sub_tile["Special Tile Size {}".format(size)] = {"sub_sn": "S{}".format(size), "sub_code": "S{}".format(size)}
 
 sub_sipm = {
     "SiPM 4 mm":    {"sub_sn": "04", "sub_code": "04"},

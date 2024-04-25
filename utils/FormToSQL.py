@@ -309,7 +309,7 @@ def connection():
     connection = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="3867",
+        password="",
         database="HGCAL_Labeling"
     )
     return connection
@@ -347,15 +347,13 @@ def csv_to_sql(csv_file):
     #mapping csv to sql data
     df = df.rename(columns=column_mapping)
 
-    # Replace empty instances of 'request_date' with None
-    df['request_date'] = pd.to_datetime(df['request_date'], errors='coerce').fillna(df['order_date'])
-    
     # Replace 'NaN' values with None for SQL compatability
     df = df.where(pd.notnull(df), None)
 
     #Fixing date/time format
-    df['order_date'] = pd.to_datetime(df['order_date']).dt.strftime('%Y-%m-%d %H:%M:%S')
-    df['request_date'] = pd.to_datetime(df['request_date']).dt.strftime('%Y-%m-%d %H:%M:%S')
+    df['order_date'] = pd.to_datetime(df['order_date'])
+    #puts request date into correct format and puts request date to order_date + 2 weeks if empty.
+    df['request_date'] = pd.to_datetime(df['request_date'], errors='coerce').fillna(df['order_date'] + pd.Timedelta(weeks=2))
 
     filtered_csv_file = "filtered_" + csv_file
     df.to_csv(filtered_csv_file, index=False)
@@ -408,41 +406,3 @@ if __name__ == "__main__":
     for row_number in find_unreviewed_indices("RawForm.csv", "ReviewedForm.csv"):
         edit_csv("RawForm.csv", "ReviewedForm.csv", row_number, connection)
     csv_to_sql("ReviewedForm.csv")
-
-
-#  #Check if user wants to edit
-#     if to_edit():
-#         #Edit then save to reviewed
-#         edited_row = {}
-#         for column in row_to_edit.index:
-#             value = row_to_edit[column]
-#             new_value = input(f"Edit {column} [{value}] (Press enter to skip): ")
-#             if new_value != '':
-#                 print(f"{column} edited.")
-#                 if numpy.isnan(edited_row[column]):
-#                     edited_row[column] = None
-#                 else:
-#                     edited_row[column] = new_value
-#             else:
-#                 print(edited_row[column])
-#                 if numpy.isnan(edited_row[column]):
-#                     edited_row[column] = None
-#                 else:
-#                     edited_row[column] = value
-        
-#         # Add the edited row to the reviewed DataFrame
-#         reviewed_csv = reviewed_csv._append(edited_row, ignore_index=True)
-#         # Save the reviewed DataFrame to the CSV file
-#         reviewed_csv.to_csv(reviewed_csv_file, index=False)
-#     else: 
-#         edited_row = {}
-#         for column in row_to_edit.index:
-#             value = row_to_edit[column]
-#             if numpy.isnan(edited_row[column]):
-#                 edited_row[column] = None
-#             else:
-#                 edited_row[column] = value
-#         #Just save to reviewed
-#         reviewed_csv = reviewed_csv._append(edited_row, ignore_index=True)
-
-#         reviewed_csv.to_csv(reviewed_csv_file, index=False)

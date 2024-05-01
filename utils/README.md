@@ -1,10 +1,8 @@
-#FormToSQL README
-
-##Instructions
+# FormToSQL README
 
 1. Getting started
    
-   First you must create the credentials.json file containing the client ID and necessary
+   First, you must create the credentials.json file containing the client ID and necessary
    passcodes, as well as configure your Google OAuth.
 
    Follow the "Set up your environment" quick start guide below using a Gmail account
@@ -46,7 +44,9 @@
    as ReviewedForm.csv. The data being saved into the MySQL server is then put into the correct 
    format, saved as a filtered CSV file, and then finally each row will be pushed into the MySQL 
    server ONLY IF IT IS UNIQUE.
-   
+
+3. Recommendations
+
    Copying and pasting of form input can lead to duplicate rows that will not be pushed properly,
    be sure to at least change the time of the order to prevent this issue.
 
@@ -58,7 +58,7 @@
    fixed but will fix the code, so please avoid this by not exiting the code until it is finished.
 
 
-3. Adding new columns
+4. Adding new columns
    
    To add a new column of data to be saved to the SQL database. First, this new column must be added
    to the MySQL server. Secondly, in the csv_to_sql function in FormToSQL.py code add the column name

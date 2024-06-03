@@ -155,27 +155,27 @@ def upload_label(label, cnx, f):
 
     def match_major(maj, cur):
         
-        sql = "SELECT major_type_id FROM Major_Type WHERE major_code = %s"
+        sql = "SELECT major_type_id, major_sn, major_code FROM Major_Type WHERE major_code = %s"
         val = (maj,)
         
         cur.execute(sql, val)
         try:
-            major_type_id = cur.fetchall()[0][0]
-            return major_type_id
+            major_type_id = cur.fetchall()[0]
+            return major_type_id[0], major_type_id[1], major_type_id[2]
         except:
-            sql = "SELECT major_type_id FROM Major_Type WHERE major_sn = %s"
+            sql = "SELECT major_type_id, major_sn, major_code FROM Major_Type WHERE major_sn = %s"
             val = (maj,)
             
             cur.execute(sql, val)
             try:
-                major_type_id = cur.fetchall()[0][0]
-                return major_type_id
+                major_type_id = cur.fetchall()[0]
+                return major_type_id[0], major_type_id[1], major_type_id[2]
             except:
-                return -1 
+                return -1, -1, -1 
 
     def check_sub(sub, maj_id, cur):
 
-        sql = "SELECT sub_type_id FROM Sub_Type WHERE sub_code = %s OR sub_sn = %s"
+        sql = "SELECT sub_type_id, sub_sn, sub_code FROM Sub_Type WHERE sub_code = %s OR sub_sn = %s"
         val = (sub, sub)
     
         cur.execute(sql, val)
@@ -184,10 +184,10 @@ def upload_label(label, cnx, f):
             sub_type_id[0]
             for i,sub_id in enumerate(sub_type_id):
                 if check_stitch(maj_id, sub_id[0]):
-                    return True, sub_type_id[i][0]
-            return False, -2
+                    return True, sub_type_id[i][0], sub_type_id[i][1], sub_type_id[i][2]
+            return False, -2, -2, -2
         except:
-            return False, -1
+            return False, -1, -1, -1
 
     def check_stitch(maj_id, sub_id):
         
@@ -212,32 +212,39 @@ def upload_label(label, cnx, f):
     prefix = label[:3+offset]
     major = label[3+offset:5+offset]
 
-    major_type_id = match_major(major, cur)
+    major_type_id, major_sn, major_code = match_major(major, cur)
 
     temp_two_sub = label[5+offset:7+offset]
     temp_three_sub = label[5+offset:8+offset]
     temp_four_sub = label[5+offset:9+offset]
 
-    is_two_sub, two_sub_type_id = check_sub(temp_two_sub, major_type_id, cur)
-    is_three_sub, three_sub_type_id = check_sub(temp_three_sub, major_type_id, cur)
-    is_four_sub, four_sub_type_id = check_sub(temp_four_sub, major_type_id, cur)
-
+    is_two_sub, two_sub_type_id, two_sub_sn, two_sub_code = check_sub(temp_two_sub, major_type_id, cur)
+    is_three_sub, three_sub_type_id, three_sub_sn, three_sub_code = check_sub(temp_three_sub, major_type_id, cur)
+    is_four_sub, four_sub_type_id, four_sub_sn, four_sub_code = check_sub(temp_four_sub, major_type_id, cur)
 
     if is_three_sub:
         sub = temp_three_sub
         sub_type_id = three_sub_type_id
+        sub_sn = three_sub_sn
+        sub_code = three_sub_code
         sn = label[8+offset:]
     elif is_four_sub:
         sub = temp_four_sub
         sub_type_id = four_sub_type_id
+        sub_sn = four_sub_sn
+        sub_code = four_sub_code
         sn = label[9+offset:]
     elif is_two_sub:
         sub = temp_two_sub
         sub_type_id = two_sub_type_id
+        sub_sn = two_sub_sn
+        sub_code = two_sub_code
         sn = label[7+offset:]
     else:
         sn = label[9+offset:]
         sub = temp_four_sub
+        sub_sn = four_sub_sn
+        sub_code = four_sub_code
         sub_type_id = four_sub_type_id
 
     if major_type_id < 0 or sub_type_id < 0:
@@ -249,6 +256,9 @@ def upload_label(label, cnx, f):
         major = "XX"
         sub = "XXXX"
 
+        major_sn = 99
+        sub_sn = 9999
+
 
     elif not is_two_sub and not is_three_sub and not is_four_sub:
         print("No mathcing subtype for {} or {} or {}".format(temp_two_sub, temp_three_sub, temp_four_sub))
@@ -257,10 +267,27 @@ def upload_label(label, cnx, f):
 
         major = "XX"
         sub = "XXXX"
-   
-    pass_stitch = check_stitch(major_type_id, sub_type_id)
+  
+        major_sn = 99
+        sub_sn = 9999
+
+    if major == "XX":
+        major_type_id = 1
+        sub_type_id = 1
  
-    print(prefix, major, sub, sn, major_type_id, sub_type_id, pass_stitch)
+    pass_stitch = check_stitch(major_type_id, sub_type_id)
+
+    type_sn = major_sn * 10000 + sub_sn
+    type_code = major + sub
+
+    query = "INSERT INTO Label (full_label, type_sn, type_code, sn, major_type_id, sub_type_id, creation_date) VALUES (%s, %s, %s, %s, %s, %s, NOW())"
+    args = (label, str(type_sn), type_code, sn, str(major_type_id), str(sub_type_id))
+
+    try:
+        cur.execute(query, args)
+        cnx.commit()
+    except:
+        print("Issue uploading label with sn={}, please check for duplicates.".format(label))
 
 if __name__ == "__main__":
 

@@ -1,9 +1,10 @@
 import requests
 import json
+from static.MajorTypes import majortypes
 
 def update_tables():
     #first makes sure that the Major Type, Sub Type, and Major Sub Stitch tables are up to date
-    r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/public_html/cgi-bin/LabelDB/update_metatables.py')
+    r = requests.post('http://cmslab3.spa.umn.edu/~cros0400/public_html/cgi-bin/LabelDB/update_metatables.py', data={'majortypes': majortypes})
 
 def upload_label(labels_json):
     # could do this multiple different ways, one is to pass the function some json with all the labels to be sent to the database

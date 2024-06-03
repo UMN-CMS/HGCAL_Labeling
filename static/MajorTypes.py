@@ -330,6 +330,7 @@ majortypes = {
 
 }    
 
+
 MACs = {
     'UCSB': {'mac_code': "SB"}, 
     'CMU':  {'mac_code': "CM"}, 

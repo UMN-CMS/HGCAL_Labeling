@@ -12,7 +12,7 @@ def png_to_zpl(image_quantities, zpl_output_path):
     lab_width = 50.8
     lab_height = 25.4 * total
 
-    label = Label(width=lab_width, height=lab_height)  # Full label size
+    label = Label(width=lab_width, height=lab_height, dpmm=8)  # Full label size
     current_y = 1  # Start position with top margin (20 dots for 0.1 inch)
 
     for png_path, quantity in image_quantities.items():
@@ -20,22 +20,35 @@ def png_to_zpl(image_quantities, zpl_output_path):
         img = Image.open(png_path)
 
         # Convert the image to monochrome (1-bit pixels)
-        img = img.rotate(90)
-        img = img.resize((365, 161))
+        if img.size[1] > img.size[0]:
+            img = img.rotate(90, expand=True)
+
+        scale = min([(25.4-2)*8 / img.size[1], (50.4-2) * 8 / img.size[0]])
+
+        re_w = round(img.size[0] * scale)
+        re_h = round(img.size[1] * scale)
+
+        img = img.resize((re_w, re_h))
+
+        width, height = img.size
+
+        width /= 8
+        height /= 8
+
+        left_edge = (50.8 - width)/2
+        top_edge = (25.4 - height)/2
 
         img = img.convert("1")
         # Get the width and height of the image
         img.show()
         
-        # Adjust the height if it exceeds the effective height after margins
-        effective_height = 20.5  # 203 - 40.6 (top + bottom margins)
 
         # Add each image the specified number of times
         for _ in range(quantity):
 
             # Create the ZPL image command
-            label.origin(0, current_y)
-            label.write_graphic(img, 48.8, height=23.4)
+            label.origin(left_edge, current_y)
+            label.write_graphic(img, img.size[0]/8.)
             label.endorigin()
             current_y += 25.4  # Move down for the next image, with a margin
 

@@ -15,8 +15,10 @@ def png_to_zpl(image_quantities, zpl_output_path):
     label = Label(width=lab_width, height=lab_height, dpmm=8)  # Full label size
     current_y = 1  # Start position with top margin (20 dots for 0.1 inch)
 
-    for png_path, quantity in image_quantities.items():
+    for wagon_type, quantity in image_quantities.items():
         # Open the PNG file
+        png_path = f"./WagonImages/Images/{wagon_type}.png"
+
         img = Image.open(png_path)
 
         # Convert the image to monochrome (1-bit pixels)
@@ -74,7 +76,7 @@ def print_zpl(zpl_output_path, printer_name):
 
 def main():
     parser = argparse.ArgumentParser(description='Generate ZPL labels from PNG images.')
-    parser.add_argument('--images', nargs='+', help='Paths to PNG images.')
+    parser.add_argument('--wagontypes', nargs='+', help='Paths to PNG images.')
     parser.add_argument('--quantities', type=int, nargs='+', help='Quantities for each image, in the same order.')
     parser.add_argument('--output', default="wagon_images.zpl", help='Output file path for ZPL code.')
     parser.add_argument('--print', action='store_true', default=False, help='Print the generated ZPL using the lp command.')
@@ -84,9 +86,9 @@ def main():
 
     # Create a dictionary from images and quantities
     if args.quantities:
-        image_quantities = {img: qty for img, qty in zip(args.images, args.quantities)}
+        image_quantities = {img: qty for img, qty in zip(args.wagontypes, args.quantities)}
     else:
-        image_quantities = {img: 1 for img in args.images}  # Default to 1 if no quantities are provided
+        image_quantities = {img: 1 for img in args.wagontypes}  # Default to 1 if no quantities are provided
 
     print(image_quantities)
 

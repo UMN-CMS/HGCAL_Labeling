@@ -11,7 +11,7 @@ wagon_type_names = {
         'WE20B1': 'Elephant'
 }
 
-def png_to_zpl(image_quantities, zpl_output_path):
+def png_to_zpl(image_quantities, zpl_output_path, borders):
     # Create a new ZPL label with the specified size (203 x 406 dots)
     total = 0
     for x in image_quantities.values():
@@ -61,9 +61,10 @@ def png_to_zpl(image_quantities, zpl_output_path):
             label.write_text(name, char_height=4, char_width=4, orientation='R')
             label.endorigin()
 
-            label.origin(0.0, current_y)
-            label.draw_box(50.8*8, 25.4*8, thickness=2, rounding=4)
-            label.endorigin()
+            if borders:
+                label.origin(0.0, current_y)
+                label.draw_box(50.8*8, 25.4*8, thickness=2, rounding=4)
+                label.endorigin()
 
             # Create the ZPL image command
             label.origin(left_edge, current_y+1)
@@ -98,6 +99,7 @@ def main():
     parser.add_argument('--output', default="wagon_images.zpl", help='Output file path for ZPL code.')
     parser.add_argument('--print', action='store_true', default=False, help='Print the generated ZPL using the lp command.')
     parser.add_argument('--printer', default='Zebra', help='Printer name (default: Zebra).')
+    parser.add_argument('--borders', action='store_true', default=False, help='Add label outlines (default: False)')
 
     args = parser.parse_args()
 
@@ -110,7 +112,7 @@ def main():
     print(image_quantities)
 
     # Generate ZPL
-    zpl_file = png_to_zpl(image_quantities, args.output)
+    zpl_file = png_to_zpl(image_quantities, args.output, args.borders)
 
     # Print if the flag is set
     if args.print:

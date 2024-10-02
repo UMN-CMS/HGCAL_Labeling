@@ -3,6 +3,14 @@ import subprocess
 from PIL import Image
 from zpl import Label
 
+wagon_type_names = {
+        'WW10A1': 'Mushroom',
+        'WE10A1': 'Leaf',
+        'WW20A1': 'Bird',
+        'WE20A1': 'Zebra',
+        'WE20B1': 'Elephant'
+}
+
 def png_to_zpl(image_quantities, zpl_output_path):
     # Create a new ZPL label with the specified size (203 x 406 dots)
     total = 0
@@ -19,11 +27,12 @@ def png_to_zpl(image_quantities, zpl_output_path):
         # Open the PNG file
         png_path = f"./WagonImages/Images/{wagon_type}.png"
 
+        name = wagon_type_names[wagon_type]
         img = Image.open(png_path)
 
         # Convert the image to monochrome (1-bit pixels)
         if img.size[1] > img.size[0]:
-            img = img.rotate(90, expand=True)
+            img = img.rotate(270, expand=True)
 
         scale = min([(25.4-2)*8 / img.size[1], (50.4-2) * 8 / img.size[0]])
 
@@ -48,8 +57,16 @@ def png_to_zpl(image_quantities, zpl_output_path):
         # Add each image the specified number of times
         for _ in range(quantity):
 
+            label.origin(50.4-5, current_y+12.7-1*len(name))
+            label.write_text(name, char_height=4, char_width=4, orientation='R')
+            label.endorigin()
+
+            label.origin(0.0, current_y)
+            label.draw_box(50.8*8, 25.4*8, thickness=2, rounding=4)
+            label.endorigin()
+
             # Create the ZPL image command
-            label.origin(left_edge, current_y)
+            label.origin(left_edge, current_y+1)
             label.write_graphic(img, img.size[0]/8.)
             label.endorigin()
             current_y += 25.4  # Move down for the next image, with a margin
